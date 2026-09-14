@@ -43,11 +43,12 @@ testing of the other apps.
 
 ## Validate before opening checkout
 
-1. Complete a normal sandboxed install, upgrade, and removal test on Ubuntu and
-   Debian. Fix installation failures before asking anyone to pay.
+1. Sandboxed install, synthetic revision upgrade, and removal checks passed in
+   Debian 12 and Ubuntu 24.04 containers. Validate real desktop installation with
+   preview testers before asking anyone to pay.
 2. Give the preview to ten relevant people with real documentation to read. Use
    the invitation in [launch copy](launch-copy.md) once download and support links
-   exist. No invitations have been sent.
+   exist. Recruitment starts in GitHub Discussions; count people only after they respond.
 3. After a week, ask what they actually used and whether they returned without
    a reminder. Use the questions in the [preview guide](linux-preview.md).
 4. Proceed toward paid v1 if at least three people use it on separate days and
@@ -87,15 +88,20 @@ sponsorships can carry fees. Eligibility/setup still needs to be completed.
 
 ## Before payment
 
-- Create `m-kim-dev/halite` and establish its public support channel. Owner and
-  MIT source licensing are set.
-- Native Linux install/upgrade/removal checks with the sandbox enabled and an
-  explicit tested-distribution list. ARM needs separate validation.
+- Public MIT source, Issues feedback form, and Discussions are available at
+  `m-kim-dev/halite`.
+- Container install/upgrade/removal checks passed with the sandbox enabled;
+  real desktop feedback and ARM validation remain outstanding.
 - In-document desktop find and file-manager opening if testers need them.
   Tabs and full-text project search remain later candidates.
 - Checkout approval, finished download, and a test purchase that delivers it.
 - Clear update entitlement, support expectations, refund policy, and tested
   refunds before taking real payments.
+
+The owner has no Lemon Squeezy account yet. The
+[checkout setup packet](checkout-setup.md) contains the product fields, copy,
+assets, and acceptance checks. Account creation, identity/business information,
+and payout onboarding must be completed by the owner in Lemon Squeezy.
 
 Do not promise automatic updates, macOS/Windows, cloud sync, or lifetime support.
 Manual download-and-install updates are sufficient initially if stated clearly.

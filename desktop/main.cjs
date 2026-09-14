@@ -87,7 +87,7 @@ function updateMenu() {
     { label: 'View', submenu: [{ role: 'reload' }, { role: 'resetZoom' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { type: 'separator' }, { role: 'togglefullscreen' }] },
     { label: 'Help', submenu: [
       { label: 'Try the Example Project', click: () => void openProject(demoPath, { demo: true }) },
-      { label: 'Send Preview Feedback', click: () => void shell.openExternal('https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml') },
+      { label: 'Send Preview Feedback', click: () => void shell.openExternal('https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml').catch(error => console.error('Could not open feedback:', error)) },
       { label: 'About Halite', click: () => void dialog.showMessageBox(window, { type: 'info', title: 'About Halite', message: `Halite ${app.getVersion()} · Desktop preview`, detail: 'A quiet place to read your project.\n\nThis preview is free to try. Desktop pricing is planned at $19 once; purchasing is not available yet.\n\nKeep editing in your favourite editor. Halite follows your changes without modifying your documents.' }) },
     ] },
   ]));

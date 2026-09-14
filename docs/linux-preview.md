@@ -7,6 +7,10 @@ This is version 0.1.0, an early preview. It is free to try. Purchasing is not
 available yet; the proposed desktop price is **$19 once**. There is no account,
 subscription, activation service, telemetry, or automatic updater.
 
+[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1).
+Download the matching `.sha256` file too, then check the package in its download
+directory with `sha256sum -c FILE.sha256`.
+
 ## Open Halite
 
 For Debian/Ubuntu, open the `.deb` in your software installer, or run:
@@ -17,14 +21,12 @@ sudo apt install ./halite-0.1.0-linux-x64-preview.deb
 
 This installs Halite under `/opt/halite`, adds an application-menu entry and
 `halite-desktop` command, and installs Chromium's sandbox helper with its
-required ownership and permissions. Use the `arm64` file on an ARM machine.
-This package is prepared for native installation testing; it has not yet been
-validated by installing it into the host operating system.
+required ownership and permissions. Only **x64** packages are published.
 
 For the portable archive on other Linux distributions:
 
 Extract the archive using your file manager. Open the extracted `Halite-linux-x64`
-folder (or `Halite-linux-arm64` for an ARM build) and run `halite`.
+folder and run `halite`.
 
 For an application-menu entry, open a terminal in that folder and run:
 
@@ -37,12 +39,21 @@ This copies Halite to `~/.local/opt/halite` and adds an application-menu entry a
 access. Run the installer again from a newer extracted release to update.
 
 Requires a Linux graphical desktop and the usual Chromium system libraries
-(GTK, NSS, GBM, ALSA). Choose the archive matching your CPU. The runtime includes
+(GTK, NSS, GBM, ALSA). The runtime includes
 Electron, so the download is larger than the command-line edition.
 Distributions that restrict unprivileged user namespaces may reject the Chromium
-sandbox in this portable build. This was observed on Ubuntu 26.04; use the `.deb`
-package for native installation testing there. Disabling the sandbox is not a
-supported installation step.
+sandbox in this portable build. This was observed on Ubuntu 26.04. Prefer the
+`.deb` on Debian/Ubuntu. Disabling the sandbox is not a supported installation step.
+
+## Installation testing
+
+The `.deb` passed install, sandboxed reading workflows, a synthetic package
+revision upgrade, and removal checks in Debian 12 and Ubuntu 24.04 x64 containers.
+The containers share the host kernel and use a virtual display; this does not
+establish compatibility with every desktop session or distribution security policy.
+Real desktop installation and native dialog feedback are welcome. ARM, other
+distributions, and Wayland-specific behavior have not been validated.
+See the [validation record](https://github.com/m-kim-dev/halite/blob/main/docs/validation.md).
 
 ## First two minutes
 
@@ -79,7 +90,8 @@ There are no tabs, full-text project search, in-document desktop find bar,
 file-manager associations, or automatic updates yet. Existing browser-mode
 `Ctrl+F` is provided by the browser. macOS and Windows packages are not available.
 
-After trying Halite on a real project, tell the person who shared this preview:
+After trying Halite on a real project, use **Help → Send Preview Feedback** or
+the [feedback form](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml):
 
 - Your Linux distribution/version and whether installation worked.
 - What you read and what you currently use for that task.
@@ -89,5 +101,5 @@ After trying Halite on a real project, tell the person who shared this preview:
 
 Do not include private project contents in a report. Error text and a small
 reproduction document are usually enough. Third-party notices are included in
-the archive. Halite source is MIT-licensed. The public support channel is still
-to be set before public distribution.
+the archive. Halite source is MIT-licensed. Ask questions or share your experience
+in [GitHub Discussions](https://github.com/m-kim-dev/halite/discussions).

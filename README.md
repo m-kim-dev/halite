@@ -22,7 +22,7 @@ built-in example. Its packages include the runtime, so readers do not need Node.
 See the [Linux installation guide](docs/linux-preview.md) for installation,
 preview limitations, and feedback prompts.
 
-[Releases](https://github.com/m-kim-dev/halite/releases) ·
+[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1) ·
 [Report a problem or share feedback](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml)
 
 The current preview and CLI are free to try. The proposed desktop price is
@@ -37,10 +37,9 @@ npm run package:linux
 ```
 
 This produces `.deb` and `.tar.gz` files with SHA-256 checksums under `release/`.
-The `.deb` is prepared for native installation testing; it has not yet been
-installed and validated on the host. The source repository is
-[m-kim-dev/halite](https://github.com/m-kim-dev/halite); previews are published
-under Releases after the installation checks pass.
+The `.deb` passed installation, sandboxed workflows, a synthetic revision upgrade,
+and removal in Debian 12 and Ubuntu 24.04 x64 containers. Real desktop sessions
+still need tester feedback; see the [validation record](docs/validation.md).
 
 ## Run the CLI
 

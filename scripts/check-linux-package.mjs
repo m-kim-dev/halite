@@ -1,5 +1,5 @@
 import { cp, mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
-import { execFileSync, spawn } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,6 +29,8 @@ try {
     await cp(path.join('node_modules', name), path.join(context, 'node_modules', name), { recursive: true });
   }
   await run(['build', '--build-arg', `QA_BASE=${bases[distro]}`, '-t', tag, '-f', path.join(context, 'scripts/linux-qa/Dockerfile'), context]);
+  // Chromium's setuid sandbox needs to create nested namespaces. This capability
+  // is confined to the disposable QA container; the app still runs as tester.
   // No host filesystem mounts or external networking during execution.
-  await run(['run', '--rm', '--network=none', '--shm-size=1g', tag]);
+  await run(['run', '--rm', '--network=none', '--shm-size=1g', '--cap-add=SYS_ADMIN', tag]);
 } finally { await rm(context, { recursive: true, force: true }); }

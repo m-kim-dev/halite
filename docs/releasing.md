@@ -25,10 +25,9 @@ copies the client, includes upstream notices, and creates a portable archive,
 Debian package, and SHA-256 files. Generated files are ignored by Git. Nothing
 is uploaded by this command.
 
-Set `HALITE_MAINTAINER='Name <support@example.com>'` to the real public identity
-when building a public Debian package. Without it the package explicitly uses
-`Halite local preview <noreply@localhost>`: temporary build metadata, not a support
-channel. The full source is MIT-licensed.
+The Debian maintainer defaults to M. Kim's verified GitHub identity and GitHub
+noreply address. Support is through GitHub Issues, not that email address.
+Forks can set `HALITE_MAINTAINER='Name <email>'`. The full source is MIT-licensed.
 
 ## Linux sandbox validation
 
@@ -41,19 +40,35 @@ HALITE_TEST_NO_SANDBOX=1 npm run test:desktop
 
 This test override does **not** establish that normal Linux installation works.
 The app and launchers never add `--no-sandbox`. The `.deb` records root ownership
-and mode 4755 for `/opt/halite/chrome-sandbox`; native installation, launch,
-upgrade, and uninstall still need verification in a disposable Ubuntu/Debian VM.
+and mode 4755 for `/opt/halite/chrome-sandbox`.
+
+For reproducible package checks with Docker available:
+
+```sh
+npm run test:linux -- debian
+npm run test:linux -- ubuntu
+```
+
+These build disposable Debian 12 / Ubuntu 24.04 containers, install the real
+`.deb` through apt, and run the desktop workflow as a non-root user with the
+Chromium sandbox enabled. They then upgrade to a synthetic higher package
+revision carrying the same payload, repeat the workflow, remove the package,
+and verify external state remains. No previous released version exists yet.
+
+Execution uses a virtual display, no host mounts, and no external network. The
+test container adds `SYS_ADMIN` so Chromium's setuid helper can create nested
+sandbox namespaces. This is a container test setting, not an application install
+requirement. Containers share the host kernel; real desktop sessions, manual
+native dialogs, and distribution-specific security policies need separate checks.
 Do not make global kernel/AppArmor changes as part of installation.
 
 ## Before a public preview
 
-1. Create `m-kim-dev/halite` under M. Kim's account and establish its support
-   contact. The account identity is verified and MIT licensing is set.
-2. Review content before the first push. Private project names and paths have
-   been removed from the design/validation history; original notes are backed
-   up outside the repository in `/tmp/halite-public-docs-before`.
-3. Run checks, inspect screenshots, and complete normal sandboxed package tests
-   on the distributions you intend to support. Only x64 was built here.
+1. Use the public `m-kim-dev/halite` repository, Issues feedback form, and Discussions.
+   Review changes for private project contents before publishing.
+2. Run checks, inspect screenshots, and complete sandboxed package tests.
+   Only x64 is currently built and tested.
+3. Update the tested-distribution list and disclose container/manual test limits.
 4. Verify checksums from `release/` with `sha256sum -c FILE.sha256`.
 5. Create a draft GitHub release with `launch-copy.md` notes, attach packages and
    checksums, and review it before publishing.

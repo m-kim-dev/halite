@@ -49,14 +49,36 @@ The [welcome screen](images/halite-welcome.png) and [reader](images/halite-reade
 were visually inspected. The browser suite also passed all six tests after the
 shared crystal icon was added.
 
-**Sandbox limitation:** this host rejected the portable Chromium sandbox helper.
-Desktop workflow automation therefore used the explicit test-only
-`HALITE_TEST_NO_SANDBOX=1` override. The app and installed launchers do not disable
-the sandbox. Debian archive inspection confirms root ownership and mode 4755
-for the helper, and `apt-get --simulate install` accepts the package without
-requiring additional dependencies on this host. A real system install, sandboxed
-launch, upgrade, removal, and manual native-picker interaction remain untested.
-The GitHub workflow is prepared but has not run on GitHub.
+The portable archive workflow on this Ubuntu 26.04 host required the explicit
+test-only `HALITE_TEST_NO_SANDBOX=1` override. The app and installed launchers do
+not disable the sandbox. That archive check alone does not establish normal
+installation compatibility.
+
+The real `.deb` was then installed through apt into disposable containers:
+
+| Environment (x64) | Install | Sandboxed desktop workflow | Synthetic revision upgrade | Removal / external state |
+| --- | --- | --- | --- | --- |
+| Debian 12 (bookworm) | Passed | Passed, before and after upgrade | Passed | Passed |
+| Ubuntu 24.04.4 LTS | Passed | Passed, before and after upgrade | Passed | Passed |
+
+The workflow ran as a non-root user. It asserted that `--no-sandbox` was absent,
+renderer sandboxing was enabled, and the helper was root-owned with mode 4755.
+Both runs covered the same reading, persistence, and isolation behavior above.
+The upgrade used the same application payload with a higher Debian package
+revision; compatibility with an older released application was not tested.
+
+Docker execution used a virtual display, no host mounts or external networking,
+and `SYS_ADMIN` to allow Chromium's helper to create nested namespaces. The
+containers share the Ubuntu 26.04 host kernel. These checks establish package
+and workflow behavior in those environments, not full desktop/VM certification.
+Real native dialog interaction, Wayland, and distribution security policies
+still need preview feedback. The GitHub CI workflow remains a template because
+the connected OAuth credential lacks `workflow` scope; CI has not run on GitHub.
+
+Testing found and fixed a distribution permission bug: Electron Packager's
+0700 temporary root became root-owned after apt installation, preventing ordinary
+users from launching the app. Packaging now normalizes directory permissions to
+0755 before creating either artifact. The container checks exercise that boundary.
 
 ## Compatibility with the example project
 
