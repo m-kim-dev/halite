@@ -1,9 +1,12 @@
 # Halite: first revenue plan
 
-Status: Linux desktop preview built; public source repository created. Checkout,
-customers, and revenue are not active yet. Pricing below is a proposal.
+Status: Linux desktop preview and MIT source published; tester recruitment
+invitation posted in GitHub Discussions. No testers are confirmed at launch;
+checkout, customers, and revenue are not active yet. Pricing below is a proposal.
 Owner: [M. Kim / m-kim-dev](https://github.com/m-kim-dev).
 Repository: [m-kim-dev/halite](https://github.com/m-kim-dev/halite).
+Preview: [v0.1.0-preview.1](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1).
+Recruitment: [Linux preview testers](https://github.com/m-kim-dev/halite/discussions/1).
 
 ## The offer
 
@@ -46,9 +49,10 @@ testing of the other apps.
 1. Sandboxed install, synthetic revision upgrade, and removal checks passed in
    Debian 12 and Ubuntu 24.04 containers. Validate real desktop installation with
    preview testers before asking anyone to pay.
-2. Give the preview to ten relevant people with real documentation to read. Use
-   the invitation in [launch copy](launch-copy.md) once download and support links
-   exist. Recruitment starts in GitHub Discussions; count people only after they respond.
+2. Give the preview to ten relevant people with real documentation to read. The
+   [GitHub Discussions invitation](https://github.com/m-kim-dev/halite/discussions/1)
+   was published on 2026-09-14. Count people only after they respond; posting an
+   invitation does not establish reach or recruitment success.
 3. After a week, ask what they actually used and whether they returned without
    a reminder. Use the questions in the [preview guide](linux-preview.md).
 4. Proceed toward paid v1 if at least three people use it on separate days and

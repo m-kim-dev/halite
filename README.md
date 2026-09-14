@@ -23,6 +23,7 @@ See the [Linux installation guide](docs/linux-preview.md) for installation,
 preview limitations, and feedback prompts.
 
 [Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1) ·
+[Join the preview testers](https://github.com/m-kim-dev/halite/discussions/1) ·
 [Report a problem or share feedback](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml)
 
 The current preview and CLI are free to try. The proposed desktop price is
