@@ -53,6 +53,8 @@ testing of the other apps.
    [GitHub Discussions invitation](https://github.com/m-kim-dev/halite/discussions/1)
    was published on 2026-09-14. Count people only after they respond; posting an
    invitation does not establish reach or recruitment success.
+   The [first outreach draft and demo](outreach.md) are ready; publication outside
+   Halite's repository awaits an appropriate signed-in account.
 3. After a week, ask what they actually used and whether they returned without
    a reminder. Use the questions in the [preview guide](linux-preview.md).
 4. Proceed toward paid v1 if at least three people use it on separate days and

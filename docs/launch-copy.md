@@ -5,6 +5,9 @@ and [tester invitation](https://github.com/m-kim-dev/halite/discussions/1) were
 published on 2026-09-14. No payment link is active. Reusable copy follows;
 the live pages contain the full installation details and validation limits.
 
+The next outreach post, community-rule findings, and demo recording instructions
+are in [first outreach](outreach.md). External outreach remains unpublished.
+
 ## Repository description
 
 A local Markdown reader for project documentation, equations, and diagrams.

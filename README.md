@@ -13,7 +13,10 @@ By [M. Kim](https://github.com/m-kim-dev).
 Source is available under the [MIT license](LICENSE). The planned paid desktop
 downloads support packaging and maintenance; building from source stays an option.
 
-![Halite reading the included example with its explorer, outline, and Mermaid diagram](docs/images/halite-reader.png)
+[![Halite demo: open the example, expand a diagram, find crystal notes, read equations and source, and switch themes](docs/images/halite-demo.gif)](docs/images/halite-demo.mp4)
+
+[Watch the 20-second demo (MP4)](docs/images/halite-demo.mp4) ·
+[Still screenshot](docs/images/halite-reader.png)
 
 ## Linux desktop preview
 
