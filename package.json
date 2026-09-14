@@ -1,0 +1,68 @@
+{
+  "name": "halite",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "author": { "name": "M. Kim", "url": "https://github.com/m-kim-dev" },
+  "repository": { "type": "git", "url": "https://github.com/m-kim-dev/halite.git" },
+  "homepage": "https://github.com/m-kim-dev/halite#readme",
+  "bugs": { "url": "https://github.com/m-kim-dev/halite/issues" },
+  "type": "module",
+  "description": "Halite — a local, read-only Markdown reader for project documentation.",
+  "main": "desktop/main.cjs",
+  "bin": {
+    "halite": "dist/server/server/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx server/cli.ts --dev",
+    "build": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json && vite build",
+    "start": "node dist/server/server/cli.js",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "desktop": "electron .",
+    "desktop:setup": "node node_modules/electron/install.js",
+    "package:linux": "npm run build && node scripts/package-linux.mjs",
+    "test:desktop": "node scripts/check-desktop.mjs",
+    "test:linux": "node scripts/check-linux-package.mjs",
+    "check": "npm test && npm run build"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "github-slugger": "^2.0.0",
+    "ignore": "^7.0.5",
+    "katex": "^0.16.22",
+    "lucide-react": "^0.468.0",
+    "mermaid": "^11.12.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "shiki": "^3.12.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "@playwright/test": "^1.55.0",
+    "@types/hast": "^3.0.5",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^24.5.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.3",
+    "electron": "44.3.0",
+    "esbuild": "0.28.2",
+    "mdast-util-from-markdown": "^2.0.3",
+    "micromark-util-types": "^2.0.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

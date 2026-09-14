@@ -1,0 +1,44 @@
+name: Check Halite
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Build preview artifacts
+        if: github.event_name == 'workflow_dispatch'
+        run: node scripts/package-linux.mjs
+      - name: Check desktop workflows
+        if: github.event_name == 'workflow_dispatch'
+        # Normal sandboxed installation is a separate release gate.
+        run: xvfb-run -a npm run test:desktop
+        env:
+          HALITE_TEST_NO_SANDBOX: '1'
+      - uses: actions/upload-artifact@v7
+        if: github.event_name == 'workflow_dispatch' && success()
+        with:
+          name: halite-linux-x64-preview
+          path: |
+            release/*.tar.gz
+            release/*.deb
+            release/*.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

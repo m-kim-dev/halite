@@ -1,0 +1,31 @@
+name: Desktop preview feedback
+description: Tell us how Halite worked on a real project.
+title: "Preview feedback: "
+body:
+  - type: markdown
+    attributes:
+      value: Please leave out private project contents and paths. Small reproduction examples are welcome.
+  - type: input
+    id: environment
+    attributes:
+      label: Halite version and Linux distribution
+      placeholder: "Example: Halite 0.1.0, Ubuntu 24.04, x64, .deb"
+    validations:
+      required: true
+  - type: textarea
+    id: experience
+    attributes:
+      label: What did you try, and what happened?
+      description: Include installation trouble, rendering problems, or what made reading easier. For a bug, give steps and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: repeat_use
+    attributes:
+      label: Did you come back to Halite later?
+      description: What do you normally use for this task, and what would make you choose Halite again?
+  - type: textarea
+    id: value
+    attributes:
+      label: Would the finished desktop experience be worth $19 once?
+      description: Optional. What would need to work better before you would buy?

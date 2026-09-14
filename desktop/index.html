@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+  <title>Welcome to Halite</title>
+  <link rel="stylesheet" href="launcher.css" />
+</head>
+<body>
+  <header><a class="brand" href="index.html"><img src="icon.svg" alt="" /> Halite</a><span class="badge">DESKTOP PREVIEW</span></header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow">YOUR PROJECT. A LITTLE CLEARER.</p>
+      <h1>A quiet place<br />to read your project.</h1>
+      <p class="description">Open a folder. Follow the ideas.<br />Markdown, equations, and diagrams, together.</p>
+      <div class="actions"><button class="primary" id="open-folder">Open a folder <span aria-hidden="true">↗</span></button><button class="secondary" id="open-file">Open a file</button></div>
+      <p class="hint">Your files stay where they are. Keep editing in your favourite editor.</p>
+      <div class="features"><span>Read-only</span><span>Works locally</span><span>No account</span></div>
+    </section>
+    <section class="projects" aria-labelledby="recent-heading">
+      <div class="section-heading"><h2 id="recent-heading">Recent projects</h2><button id="clear-recents" class="text-button" hidden>Clear</button></div>
+      <div id="recents"></div>
+      <div id="empty"><div class="empty-symbol" aria-hidden="true">◇</div><h3>Start with something you know.</h3><p>Choose your project folder.<br />Your recent projects will appear here.</p></div>
+      <button class="example" id="open-example"><span class="example-icon" aria-hidden="true">◇</span><span><strong>Take a look around</strong><small>Try an example with math and diagrams</small></span><span aria-hidden="true">→</span></button>
+      <p id="error" role="alert"></p>
+    </section>
+  </main>
+  <footer><span>Halite · <span id="version"></span></span><span>Named after the crystal NaCl.</span></footer>
+  <script src="launcher.js"></script>
+</body>
+</html>
