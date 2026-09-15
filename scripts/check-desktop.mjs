@@ -4,6 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkFind } from './check-find.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const metadata = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
@@ -12,7 +13,9 @@ const output = path.join(root, 'test-results/desktop');
 await mkdir(output, { recursive: true });
 const installation = path.join(temporary, 'installed app');
 const installedBinary = process.env.HALITE_TEST_BINARY;
-if (!installedBinary) {
+const source = process.env.HALITE_TEST_SOURCE === '1';
+if (installedBinary && source) throw new Error('Choose a source check or an installed binary, not both.');
+if (!installedBinary && !source) {
   const archive = path.join(root, `release/halite-${metadata.version}-linux-${process.arch}-preview.tar.gz`);
   execFileSync('tar', ['-xzf', archive, '-C', temporary]);
   const extracted = path.join(temporary, `Halite-linux-${process.arch}`);
@@ -23,12 +26,16 @@ if (!installedBinary) {
 if (installedBinary && process.env.HALITE_TEST_NO_SANDBOX === '1') throw new Error('System-package validation requires the Chromium sandbox.');
 const fixture = path.join(temporary, 'my-project');
 await cp(path.join(root, 'tests/fixtures/project'), fixture, { recursive: true });
+// Anchor discovery to this fixture even if the host's temporary directory sits
+// inside another repository.
+await mkdir(path.join(fixture, '.git'), { recursive: true });
 const env = { ...process.env, HALITE_DESKTOP_STATE_DIR: path.join(temporary, 'desktop-state'), HALITE_STATE_DIR: path.join(temporary, 'reader-state') };
 delete env.ELECTRON_RUN_AS_NODE;
 let application;
 const errors = [];
 const launch = async () => {
-  const instance = await _electron.launch({ executablePath: installedBinary || path.join(installation, 'opt/halite/halite'), cwd: temporary, env, chromiumSandbox: process.env.HALITE_TEST_NO_SANDBOX !== '1', timeout: 30000 });
+  const executablePath = source ? path.join(root, 'node_modules/electron/dist/electron') : installedBinary || path.join(installation, 'opt/halite/halite');
+  const instance = await _electron.launch({ executablePath, args: source ? [root] : [], cwd: temporary, env, chromiumSandbox: process.env.HALITE_TEST_NO_SANDBOX !== '1', timeout: 30000 });
   const page = await instance.firstWindow();
   page.on('pageerror', error => errors.push(error.message));
   return { instance, page };
@@ -54,8 +61,7 @@ try {
   await page.screenshot({ path: path.join(output, 'reader.png') });
   await page.getByRole('link', { name: 'crystal notes', exact: true }).click();
   await expect(page.locator('.katex-display')).toHaveCount(2);
-  await page.getByRole('link', { name: 'Python calculation', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'spacing.py', exact: true })).toBeVisible();
+  await checkFind(application, page, output, errors);
   await welcome();
   await expect(page.locator('#empty')).toBeVisible();
   await expect.poll(async () => fetch(`${firstOrigin}/api/bootstrap`).then(() => false, () => true)).toBe(true);
@@ -88,7 +94,7 @@ try {
   await expect(page.locator('#empty')).toBeVisible();
   expect(JSON.parse(await readFile(path.join(env.HALITE_DESKTOP_STATE_DIR, 'recent-projects.json'), 'utf8'))).toEqual([]);
   expect(errors).toEqual([]);
-  console.log(`${installedBinary ? 'System package' : 'Desktop archive'} passed: welcome, example, diagrams, math, source preview, folder picker callback, IPC isolation, live refresh, recent projects, restart, preferences, and server cleanup.`);
+  console.log(`${source ? 'Source app' : installedBinary ? 'System package' : 'Desktop archive'} passed: welcome, example, diagrams, math, document find (counts, buttons, keyboard, case, navigation cleanup), source preview, folder picker callback, IPC isolation, live refresh, recent projects, restart, preferences, and server cleanup.`);
   console.log(`Chromium sandbox: ${process.env.HALITE_TEST_NO_SANDBOX === '1' ? 'disabled by explicit test override' : 'enabled'}. Screenshots: test-results/desktop/`);
 } finally {
   await application?.close();

@@ -1,0 +1,19 @@
+:root { font-family: system-ui, sans-serif; color: #243244; background: #f8fafc; color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; border: 1px solid #cbd5e1; border-radius: 8px; height: 116px; }
+main { padding: 12px; }
+.controls { display: flex; align-items: center; gap: 6px; }
+#query { width: 100%; min-width: 0; padding: 9px 10px; font: inherit; font-size: 14px; border: 1px solid #94a3b8; border-radius: 5px; background: white; color: inherit; }
+button { flex: 0 0 30px; height: 34px; border: 0; border-radius: 5px; background: transparent; color: inherit; font-size: 22px; cursor: pointer; }
+button:hover { background: #e2e8f0; }
+:focus-visible { outline: 2px solid #2563eb; outline-offset: 1px; }
+.details { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; gap: 10px; font-size: 12px; }
+label { display: flex; gap: 5px; align-items: center; white-space: nowrap; }
+#result[data-error="true"] { color: #b91c1c; }
+@media (prefers-color-scheme: dark) {
+  :root { color: #e2e8f0; background: #1c232c; }
+  body { border-color: #475569; }
+  #query { color: #e2e8f0; background: #111827; border-color: #64748b; }
+  button:hover { background: #334155; }
+  #result[data-error="true"] { color: #fca5a5; }
+}

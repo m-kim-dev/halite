@@ -22,7 +22,7 @@ downloads support packaging and maintenance; building from source stays an optio
 
 The desktop preview adds a native folder/file picker, recent projects, and a
 built-in example. Its packages include the runtime, so readers do not need Node.
-See the [Linux installation guide](docs/linux-preview.md) for installation,
+See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.1.0-preview.1/docs/linux-preview.md) for installation,
 preview limitations, and feedback prompts.
 
 [Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1) ·
@@ -106,6 +106,8 @@ If you previously linked the `mdview` command, rerun `npm link` to register `hal
 Press **Ctrl+K** or **Cmd+K** to find a document. Use arrow keys and Enter in quick
 open. The explorer supports arrow-key movement, left/right expansion, and Enter
 to open a file. Normal browser **Ctrl/Cmd+F** searches the current document.
+The unreleased 0.2 source adds **Ctrl+F**, next/previous matches with **F3/Shift+F3**,
+and optional case matching. Press **Escape** to close find.
 
 ## Self-hosting and file access
 

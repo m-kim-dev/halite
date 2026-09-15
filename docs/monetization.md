@@ -20,7 +20,7 @@ The free CLI already provides the core reading experience.
 | Edition | Proposed price | What the user gets |
 | --- | --- | --- |
 | CLI / browser | Free | Local Markdown, math, Mermaid, navigation, themes, live refresh |
-| Desktop preview | Free | Linux app, native file/folder picker, recent projects, included example |
+| Desktop preview | Free | Linux app, native file/folder picker, recent projects, document find, included example |
 | Desktop 1.x | $19 once | Tested Linux installer, dedicated window, desktop conveniences, all 1.x updates |
 | Optional support | Any amount | Support maintenance; no priority-support or feature promises |
 
@@ -98,7 +98,7 @@ sponsorships can carry fees. Eligibility/setup still needs to be completed.
   `m-kim-dev/halite`.
 - Container install/upgrade/removal checks passed with the sandbox enabled;
   real desktop feedback and ARM validation remain outstanding.
-- In-document desktop find and file-manager opening if testers need them.
+- Document find is included in the unreleased 0.2.0 candidate. Consider file-manager opening if testers need it.
   Tabs and full-text project search remain later candidates.
 - Checkout approval, finished download, and a test purchase that delivers it.
 - Clear update entitlement, support expectations, refund policy, and tested

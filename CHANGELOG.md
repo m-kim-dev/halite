@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 — document find (release candidate)
+
+- Find text in the desktop reader with Ctrl+F or Edit → Find in Document.
+- Show match counts; move forward/back with buttons, Enter/Shift+Enter, or
+  F3/Shift+F3; optionally match case; close with Escape.
+- Clear find results when opening another document or returning to Welcome.
+- Keep document content separate from the find panel's privileged controls.
+
+The candidate remains a free preview. Checkout and real-desktop feedback are
+still pending; the original 0.1.0 release remains available.
+
 ## 0.1.0 — Linux desktop preview
 
 - Open local Markdown projects in a dedicated desktop window or a browser.

@@ -1,5 +1,28 @@
 # Halite validation record
 
+## Unreleased 0.2.0 candidate — September 15, 2026
+
+The standard 29 tests and production build passed. The new desktop find suite
+passed against the installed 0.2.0 package in Debian 12 and Ubuntu 24.04.4 x64
+containers, before and after a synthetic package revision upgrade. It covers
+Ctrl+F through Electron input, result counts, next/previous wrapping, Enter/F3
+shortcuts, case matching, clearing, Escape, document navigation, and renderer
+isolation. The full reading/persistence workflow and package removal also passed.
+Both container runs kept Chromium sandboxing enabled and used a non-root user.
+
+Both local package checksums passed. The 0.2.0 portable archive workflow was
+interrupted before execution and remains unverified. No 0.2.0 release has been
+published. The six browser tests below are historical 0.1.0 results; this change
+did not modify the shared browser UI. Native desktop dialogs, Wayland, and
+real-user installation reports remain outstanding.
+
+The find panel was visually inspected during source-app testing. Host-native
+shortcut automation depended on window focus; the installed-package checks used
+isolated virtual displays. Documentation changed after packaging, so rebuild
+the candidate before publishing it to include the final installation guide.
+
+## Previous 0.1.0 validation
+
 Validated on 2026-09-14 with Node.js 24.16.0 and Chromium through Playwright.
 The application's minimum declared Node version is 22.12.0; that minimum and
 other operating systems/browser engines were not separately tested here.

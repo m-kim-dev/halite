@@ -6,6 +6,9 @@ order, customer, or revenue exists yet.
 
 ## Owner setup
 
+Start with the [step-by-step account setup guide](account-setup.md) for the
+Halite inbox, Korean seller account, payout verification, and separate Reddit identity.
+
 Create an account at [Lemon Squeezy](https://app.lemonsqueezy.com/register), using
 an email you control. Keep passwords, identity documents, and payout details in
 the provider's interface. A signed-in browser connection will let the remaining

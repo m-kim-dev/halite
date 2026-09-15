@@ -4,6 +4,9 @@ Status, 2026-09-14: GitHub source, downloads, and tester invitation are public.
 The post below is a draft. No Reddit post or private message has been sent.
 No signed-in Reddit browser is connected.
 
+The owner chose a separate Halite Reddit identity. Follow
+[account setup](account-setup.md) to create it and provide the non-secret handoff details.
+
 Ready assets: [20-second MP4](images/halite-demo.mp4) and
 [embeddable GIF](images/halite-demo.gif). Both record the actual packaged app
 using its public example, with no private project content.
@@ -33,22 +36,23 @@ activity to qualify for posting.
 
 **Title:** Halite: a Linux Markdown reader for equations and diagrams (MIT)
 
-I'm sharing the first Linux desktop preview of Halite, a reader for local
+I'm sharing Halite, an early Linux desktop reader for local
 Markdown projects. Open an existing folder, follow relative links, and read
 equations and Mermaid diagrams while continuing to write in your editor.
 
 The short demo shows the included example, diagram expansion, quick open,
 equations, a linked Python source file, and dark mode. Halite also refreshes
 when files change and remembers recent projects and reading positions.
+The current preview adds in-document find with match counts and keyboard navigation.
 
 - [Source and demo](https://github.com/m-kim-dev/halite)
-- [Free Linux x64 download](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1)
+- [Free Linux x64 download](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1)
 
 The `.deb` and portable archive include Electron, so no Node installation is
 needed. Downloads are about 121 MiB. The `.deb` passed sandboxed installation
 and workflow checks in Debian 12 and Ubuntu 24.04 containers; feedback from real
 desktop sessions is the next step. This is an early preview: no tabs, full-text
-search, desktop find bar, or automatic updates yet.
+project search or automatic updates yet.
 
 The full source is MIT-licensed. I'm considering $19 one-time downloads for the
 finished desktop release to support packaging and maintenance; the current

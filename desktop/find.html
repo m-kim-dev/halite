@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+  <title>Find in document — Halite</title>
+  <link rel="stylesheet" href="find.css" />
+</head>
+<body>
+  <main aria-label="Find in document">
+    <div class="controls">
+      <input id="query" type="search" aria-label="Find in document" placeholder="Find in document…" maxlength="500" autocomplete="off" autofocus />
+      <button id="previous" type="button" aria-label="Previous match" title="Previous match (Shift+Enter)">↑</button>
+      <button id="next" type="button" aria-label="Next match" title="Next match (Enter)">↓</button>
+      <button id="close" type="button" aria-label="Close find" title="Close (Escape)">×</button>
+    </div>
+    <div class="details"><span id="result" role="status" aria-live="polite">Type to search</span><label><input id="match-case" type="checkbox" /> Match case</label></div>
+  </main>
+  <script src="find.js"></script>
+</body>
+</html>

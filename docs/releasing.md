@@ -16,9 +16,14 @@ npm run test:desktop
 Install the Playwright browser once with `npx playwright install chromium`.
 The desktop test extracts the actual archive, installs it under a temporary
 prefix, removes the source extraction, and launches it with separate settings
-and a temporary project. It checks welcome, example, diagrams/math/source,
+and a temporary project. It checks welcome, example, document find, diagrams/math/source,
 folder-picker callback, preferences, recents, restart, live refresh, and server
 cleanup. Native dialogs are mocked; real picker interaction needs a manual pass.
+
+After `npm run build`, `HALITE_TEST_SOURCE=1 npm run test:desktop` checks the
+source app without packaging. This uses the local Electron runtime and does not
+establish archive or package installation behavior. It has the same sandbox
+requirements described below.
 
 `npm run package:linux` combines the build and packaging. It bundles the server,
 copies the client, includes upstream notices, and creates a portable archive,
@@ -53,7 +58,8 @@ These build disposable Debian 12 / Ubuntu 24.04 containers, install the real
 `.deb` through apt, and run the desktop workflow as a non-root user with the
 Chromium sandbox enabled. They then upgrade to a synthetic higher package
 revision carrying the same payload, repeat the workflow, remove the package,
-and verify external state remains. No previous released version exists yet.
+and verify external state remains. This synthetic revision check does not prove
+migration from an earlier released application.
 
 Execution uses a virtual display, no host mounts, and no external network. The
 test container adds `SYS_ADMIN` so Chromium's setuid helper can create nested

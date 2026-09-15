@@ -7,7 +7,7 @@ printf 'Distribution: '
 printf '%s\n' "$PRETTY_NAME"
 runuser -u tester -- env HALITE_TEST_BINARY=/opt/halite/halite xvfb-run -a node scripts/check-desktop.mjs
 
-# No older public build exists. Exercise dpkg's upgrade path with an explicitly
+# Exercise dpkg's upgrade path with an explicitly
 # synthetic higher package revision carrying the same application payload.
 dpkg-deb --raw-extract /qa/package.deb /qa/upgrade
 previous=$(dpkg-query -W -f='${Version}' halite-desktop)

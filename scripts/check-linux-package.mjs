@@ -22,6 +22,7 @@ try {
   await cp('package.json', path.join(context, 'package.json'));
   await mkdir(path.join(context, 'scripts'), { recursive: true });
   await cp('scripts/check-desktop.mjs', path.join(context, 'scripts/check-desktop.mjs'));
+  await cp('scripts/check-find.mjs', path.join(context, 'scripts/check-find.mjs'));
   await cp('scripts/linux-qa', path.join(context, 'scripts/linux-qa'), { recursive: true });
   await cp('tests/fixtures', path.join(context, 'tests/fixtures'), { recursive: true });
   for (const name of ['@playwright/test', 'playwright', 'playwright-core']) {

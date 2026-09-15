@@ -3,12 +3,14 @@ const { mkdir, readFile, realpath, rename, writeFile } = require('node:fs/promis
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { welcomeURL, isWelcome, isReader, externalURL, cleanRecents, readerPermission } = require('./policy.cjs');
+const { createFindController } = require('./find.cjs');
 
 app.setName('Halite');
 app.setPath('userData', process.env.HALITE_DESKTOP_STATE_DIR || path.join(app.getPath('appData'), 'halite-desktop'));
 protocol.registerSchemesAsPrivileged([{ scheme: 'halite', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
 let window;
+let finder;
 let server;
 let opening = false;
 let quitting = false;
@@ -30,6 +32,7 @@ function report(error) {
 async function openProject(input, { demo = false } = {}) {
   if (opening || quitting) return;
   opening = true;
+  finder?.close(false);
   let next;
   const previous = server;
   try {
@@ -64,6 +67,7 @@ async function chooseProject(kind) {
 async function showWelcome() {
   if (opening) return;
   opening = true;
+  finder?.close(false);
   try {
     await window.loadURL(welcomeURL);
     const previous = server;
@@ -83,7 +87,12 @@ function updateMenu() {
       { label: 'Welcome', accelerator: 'CmdOrCtrl+Shift+H', click: () => void showWelcome() },
       { type: 'separator' }, { role: 'quit' },
     ] },
-    { label: 'Edit', submenu: [{ role: 'copy' }, { role: 'paste' }, { role: 'selectAll' }] },
+    { label: 'Edit', submenu: [
+      { role: 'copy' }, { role: 'paste' }, { role: 'selectAll' }, { type: 'separator' },
+      { label: 'Find in Document…', accelerator: 'CmdOrCtrl+F', enabled: Boolean(server), click: () => void finder?.open().catch(report) },
+      { label: 'Find Next', accelerator: 'F3', enabled: Boolean(server), click: () => void Promise.resolve(finder?.next(true)).catch(report) },
+      { label: 'Find Previous', accelerator: 'Shift+F3', enabled: Boolean(server), click: () => void Promise.resolve(finder?.next(false)).catch(report) },
+    ] },
     { label: 'View', submenu: [{ role: 'reload' }, { role: 'resetZoom' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { type: 'separator' }, { role: 'togglefullscreen' }] },
     { label: 'Help', submenu: [
       { label: 'Try the Example Project', click: () => void openProject(demoPath, { demo: true }) },
@@ -122,7 +131,7 @@ else {
     try { recents = cleanRecents(JSON.parse(await readFile(recentFile, 'utf8'))); } catch { /* First launch or invalid state. */ }
     protocol.handle('halite', request => {
       const url = new URL(request.url);
-      const files = { '/index.html': 'index.html', '/launcher.css': 'launcher.css', '/launcher.js': 'launcher.js', '/icon.svg': 'icon.svg' };
+      const files = { '/index.html': 'index.html', '/launcher.css': 'launcher.css', '/launcher.js': 'launcher.js', '/icon.svg': 'icon.svg', '/find.html': 'find.html', '/find.css': 'find.css', '/find.js': 'find.js' };
       if (url.hostname !== 'app' || !Object.hasOwn(files, url.pathname)) return new Response('Not found', { status: 404 });
       return net.fetch(pathToFileURL(path.join(__dirname, files[url.pathname])).href);
     });
@@ -131,6 +140,7 @@ else {
       icon: path.join(__dirname, 'icon.png'), show: false,
       webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true },
     });
+    finder = createFindController(window, () => server?.url);
     window.webContents.session.setPermissionRequestHandler((contents, permission, callback) => callback(contents === window.webContents && readerPermission(permission, contents.getURL(), server?.url)));
     window.webContents.session.setPermissionCheckHandler((contents, permission, origin) => contents === window.webContents && isReader(origin, server?.url) && readerPermission(permission, contents.getURL(), server?.url));
     window.webContents.on('will-attach-webview', event => event.preventDefault());

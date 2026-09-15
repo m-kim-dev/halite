@@ -1,14 +1,18 @@
 # Halite for Linux — desktop preview
 
+This guide describes the **unreleased 0.2.0 candidate**. The currently published
+download is [0.1.0](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1);
+use its [matching installation guide](https://github.com/m-kim-dev/halite/blob/v0.1.0-preview.1/docs/linux-preview.md).
+
 **A quiet place to read your project.** Open an existing folder and browse
 Markdown, equations, and diagrams while you keep writing in your editor.
 
-This is version 0.1.0, an early preview. It is free to try. Purchasing is not
+This is version 0.2.0, an early preview. It is free to try. Purchasing is not
 available yet; the proposed desktop price is **$19 once**. There is no account,
 subscription, activation service, telemetry, or automatic updater.
 
-[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1).
-Download the matching `.sha256` file too, then check the package in its download
+The 0.2.0 packages currently exist only as local build artifacts under `release/`.
+Use the matching `.sha256` file to check the package in its download
 directory with `sha256sum -c FILE.sha256`.
 
 ## Open Halite
@@ -16,7 +20,7 @@ directory with `sha256sum -c FILE.sha256`.
 For Debian/Ubuntu, open the `.deb` in your software installer, or run:
 
 ```sh
-sudo apt install ./halite-0.1.0-linux-x64-preview.deb
+sudo apt install ./halite-0.2.0-linux-x64-preview.deb
 ```
 
 This installs Halite under `/opt/halite`, adds an application-menu entry and
@@ -61,8 +65,11 @@ See the [validation record](https://github.com/m-kim-dev/halite/blob/main/docs/v
 2. Choose **File → Open Folder** (`Ctrl+O`) to read a real project, or
    **File → Open Markdown File** (`Ctrl+Shift+O`) for a single document.
 3. Press **Ctrl+K** to find another document by name, path, or title.
-4. Change a Markdown file in your editor and save. Halite refreshes the preview.
-5. Choose **File → Welcome** (`Ctrl+Shift+H`) to return to recent projects.
+4. Press **Ctrl+F** to find text in the open document. Use **Enter/F3** for the
+   next match, **Shift+Enter/Shift+F3** for the previous match, and **Escape** to
+   close. The panel also has match buttons and a **Match case** option.
+5. Change a Markdown file in your editor and save. Halite refreshes the preview.
+6. Choose **File → Welcome** (`Ctrl+Shift+H`) to return to recent projects.
 
 Halite reads your existing files and does not change them. It discovers the
 enclosing Git root when one exists. Relative links stay inside that project.
@@ -86,8 +93,8 @@ Your project files and reading preferences remain. If you set
 
 ## Preview limits and feedback
 
-There are no tabs, full-text project search, in-document desktop find bar,
-file-manager associations, or automatic updates yet. Existing browser-mode
+There are no tabs, full-text project search, file-manager associations, or
+automatic updates yet. Existing browser-mode
 `Ctrl+F` is provided by the browser. macOS and Windows packages are not available.
 
 After trying Halite on a real project, use **Help → Send Preview Feedback** or
