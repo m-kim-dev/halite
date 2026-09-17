@@ -58,6 +58,8 @@ from `desktop/icon.svg`. Those remain the authoritative assets. Screenshots use
 public examples. The 20-second silent demo shows core reading features and
 predates project tabs; the separate 0.2.0 screenshot demonstrates those tabs.
 A text description next to the video provides its visual sequence.
+The 0.3.0 page describes Markdown source/copy controls and links to the new
+release; the existing demo and project-tab screenshot retain their original scope.
 
 Cloudflare Pages currently returns full HTTP 200 responses to video Range
 requests, which prevents reliable native seeking. On the play button's first

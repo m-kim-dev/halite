@@ -19,7 +19,7 @@ Install the Playwright browser once with `npx playwright install chromium`.
 The desktop test extracts the actual archive, installs it under a temporary
 prefix, removes the source extraction, and launches it with separate settings
 and a temporary project. It checks welcome, example, document find, diagrams/math/source,
-folder-picker callback, preferences, recents, restart, live refresh, tabs,
+Markdown source/preview, real clipboard copying, folder-picker callback, preferences, recents, restart, live refresh, tabs,
 moving projects between windows, and shared-service shutdown. Browser workspace
 checks exercise eight live projects and CLI activation; CLI checks exercise
 concurrent startup, one process/port, and stale-lock recovery. Native dialogs are mocked; real picker interaction needs a manual pass.
@@ -80,9 +80,9 @@ Do not make global kernel/AppArmor changes as part of installation.
    Only x64 is currently built and tested.
 3. Update the tested-distribution list and disclose container/manual test limits.
 4. Verify checksums from `release/` with `sha256sum -c FILE.sha256`.
-5. Create a draft GitHub release with `launch-copy.md` notes, attach packages and
+5. Create a draft GitHub release with [launch copy](../marketing/launch-copy.md), attach packages and
    checksums, and review it before publishing.
-6. Keep checkout unavailable during free validation. Follow `monetization.md`
+6. Keep checkout unavailable during free validation. Follow the [revenue plan](../business/monetization.md)
    before creating the paid offer.
 
 The workflow template is in `scripts/ci/github-check.yml`. Copy it to

@@ -69,7 +69,7 @@ async function normalizePermissions(directory) {
 }
 await normalizePermissions(bundle);
 await cp('desktop/install.sh', path.join(bundle, 'install.sh'));
-await cp('docs/linux-preview.md', path.join(bundle, 'START-HERE.md'));
+await cp('docs/guides/linux-preview.md', path.join(bundle, 'START-HERE.md'));
 await cp('LICENSE', path.join(bundle, 'LICENSE.halite.txt'));
 await cp(path.join(stage, 'THIRD-PARTY-NOTICES.txt'), path.join(bundle, 'THIRD-PARTY-NOTICES.txt'));
 const name = `halite-${metadata.version}-linux-${process.arch}-preview.tar.gz`;

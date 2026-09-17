@@ -57,6 +57,15 @@ export async function checkFind(application, page, output, errors) {
   await expect.poll(() => application.windows().length).toBe(1);
 
   panel = await open();
+  await page.getByRole('button', { name: 'Source', exact: true }).click();
+  await expect.poll(() => application.windows().length).toBe(1);
+  panel = await open();
+  await panel.getByRole('searchbox').fill('cubic');
+  await expect(panel.getByRole('status')).toHaveText('1 of 2');
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  await expect.poll(() => application.windows().length).toBe(1);
+
+  panel = await open();
   await panel.getByRole('searchbox').fill('cubic');
   await expect(panel.getByRole('status')).toHaveText('1 of 2');
   await page.getByRole('link', { name: 'Python calculation', exact: true }).click();

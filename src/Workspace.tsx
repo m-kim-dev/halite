@@ -87,6 +87,7 @@ export function Workspace() {
       if (event.origin !== location.origin) return;
       const project = [...frames.current].find(([, frame]) => frame.contentWindow === event.source)?.[0];
       if (!project) return;
+      if (event.data?.type === 'halite:view-changed' && latest.current?.active === project) window.haliteDesktop?.changed();
       if (event.data?.type === 'halite:navigated') pendingNavigation.current.delete(project);
       if (event.data?.type === 'halite:ready') {
         const path = pendingNavigation.current.get(project);

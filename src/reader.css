@@ -18,6 +18,9 @@
 .prose code { font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: .83em; background: var(--subtle); border: 1px solid var(--border); border-radius: 4px; padding: .13em .34em; overflow-wrap: anywhere; }
 .prose pre { font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: .79em; line-height: 1.7; overflow-x: auto; tab-size: 4; padding: 18px 20px; margin: 0; white-space: pre; }
 .prose pre code { font-size: inherit; padding: 0; border: 0; border-radius: 0; background: transparent; white-space: pre; overflow-wrap: normal; }
+.prose .markdown-source { padding: 18px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--code); font-size: .85em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.prose .markdown-source code { white-space: inherit; overflow-wrap: inherit; }
+.prose .markdown-source:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .code-block { margin: 1.4em 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--code); }
 .block-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 37px; padding: 4px 12px 4px 16px; border-bottom: 1px solid var(--border); background: var(--sidebar); font-size: 10px; color: var(--muted); line-height: 1.4; }
 .block-toolbar > span { letter-spacing: .4px; }

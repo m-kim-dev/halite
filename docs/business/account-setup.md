@@ -66,7 +66,7 @@ If asked for a short store description, use this factual draft:
 > and a free preview is already available on GitHub. Paid products will be
 > delivered as downloadable software files.
 
-Optional branding asset: [Halite icon](../desktop/icon.png).
+Optional branding asset: [Halite icon](../../desktop/icon.png).
 
 ## 3. Request store activation and set up payouts
 
@@ -75,7 +75,7 @@ New stores start in **test mode**. Email verification creates a usable account;
 
 1. In the dashboard, choose **Activate your store**.
 2. Complete the business/product questionnaire truthfully. Link the public
-   repository and [existing Linux preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1)
+   repository and [existing Linux preview](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1)
    when asked for evidence of the product. Do not describe it as a stable 1.x release.
 3. Complete the identity verification in the provider's interface. Supply the
    identification it requests there; the exact requirements can vary.
@@ -114,7 +114,7 @@ The product copy and checkout checks are already prepared in
 [checkout setup](checkout-setup.md). You can hand the account back at this point;
 you do not need to design the storefront or configure an API integration yourself.
 If activation requires a product entry first, use that document for a test-mode
-draft and label any uploaded 0.1.0 build as the free preview. Live paid delivery
+draft and label any uploaded preview build as the free preview. Live paid delivery
 still needs its own verification.
 
 ## 4. Create the separate Halite Reddit account
@@ -136,7 +136,7 @@ still needs its own verification.
 
 [Official Reddit signup instructions](https://support.reddithelp.com/hc/en-us/articles/360060420092-How-do-I-sign-up-for-a-Reddit-account).
 
-The first introduction is already written in [the outreach document](outreach.md#post-draft-for-rsideproject).
+The first introduction is already written in [the outreach document](../marketing/outreach.md#post-draft-for-rsideproject).
 We will use the new account for that post and replies. A new account may face
 posting restrictions; report any actual message rather than trying to bypass it.
 Keep your personal account out of voting on Halite's posts.

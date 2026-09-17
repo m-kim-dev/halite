@@ -6,7 +6,7 @@ checkout, customers, and revenue are not active yet. Pricing below is a proposal
 Owner: [M. Kim / m-kim-dev](https://github.com/m-kim-dev).
 Repository: [m-kim-dev/halite](https://github.com/m-kim-dev/halite).
 Website: [Halite](https://halite-reader.pages.dev/).
-Preview: [v0.2.0-preview.1](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1).
+Preview: [v0.3.0-preview.1](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1).
 Recruitment: [Linux preview testers](https://github.com/m-kim-dev/halite/discussions/1).
 
 ## The offer
@@ -54,10 +54,10 @@ testing of the other apps.
    [GitHub Discussions invitation](https://github.com/m-kim-dev/halite/discussions/1)
    was published on 2026-09-14. Count people only after they respond; posting an
    invitation does not establish reach or recruitment success.
-   The [first outreach draft and demo](outreach.md) are ready; publication outside
+   The [first outreach draft and demo](../marketing/outreach.md) are ready; publication outside
    Halite's repository awaits an appropriate signed-in account.
 3. After a week, ask what they actually used and whether they returned without
-   a reminder. Use the questions in the [preview guide](linux-preview.md).
+   a reminder. Use the questions in the [preview guide](../guides/linux-preview.md).
 4. Proceed toward paid v1 if at least three people use it on separate days and
    at least two would buy at $19. These are small decision rules, not statistical
    proof or forecasts. Fix the most repeated obstacle first.

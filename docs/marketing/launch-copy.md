@@ -1,7 +1,7 @@
 # Halite launch copy
 
-The [Linux preview release](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1)
-includes project tabs and a shared local service; the [tester invitation](https://github.com/m-kim-dev/halite/discussions/1)
+The [Linux preview release](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1)
+includes Markdown source/copy controls, project tabs, and a shared local service; the [tester invitation](https://github.com/m-kim-dev/halite/discussions/1)
 was published on 2026-09-14. No payment link is active. Reusable copy follows;
 the live pages contain the full installation details and validation limits.
 
@@ -18,11 +18,14 @@ titles to distinguish it from other projects called Halite.
 
 ## Preview release notes
 
-**Halite 0.2.0 — Linux desktop preview**
+**Halite 0.3.0 — Linux desktop preview**
 
 Halite gives your project documentation its own reading window. Open an existing
 folder, follow relative links, and read Markdown, equations, and Mermaid diagrams
 without importing your files.
+
+Switch between Preview and Source to inspect the original Markdown. Copy Markdown
+copies the whole document from either view for an email reply or another editor.
 
 This preview includes a native file/folder picker, recent projects, light and
 dark themes, live refresh, in-document find, project tabs, optional separate windows, and a small example to explore.
@@ -49,7 +52,7 @@ desktop preview. It's free during this validation period. I'd especially like
 to hear whether you return after the first session, what gets in the way,
 and whether the finished desktop experience would be worth $19 once.
 
-[Download](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1) ·
+[Download](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1) ·
 [Reply in Discussions](https://github.com/m-kim-dev/halite/discussions/1) ·
 [Report a bug](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml).
 Get permission before quoting feedback publicly.
@@ -65,5 +68,5 @@ New versions are downloaded and installed manually.
 
 Before using: confirm update entitlement and supported distributions, provide
 support/refund policy, and test purchase, download, update access, and refunds.
-The current preview is not this paid product. The [checkout setup packet](checkout-setup.md)
+The current preview is not this paid product. The [checkout setup packet](../business/checkout-setup.md)
 contains the concrete product fields, available media, and remaining verification.

@@ -5,6 +5,7 @@ import type { Bootstrap, DocFile, DocumentData, Heading, Preferences, ReadingPos
 import { Explorer } from './components/Explorer';
 import { Markdown, CodeBlock } from './components/Markdown';
 import { QuickOpen } from './components/QuickOpen';
+import { DocumentActions, type DocumentView } from './components/DocumentActions';
 import { getHeadings } from './lib/markdown';
 import { apiUrl, documentUrl } from './lib/navigation';
 
@@ -40,6 +41,12 @@ export function App() {
   const [progress, setProgress] = useState(0);
   const [viewVersion, setViewVersion] = useState(0);
   const [historyVersion, setHistoryVersion] = useState(0);
+  const [documentView, setDocumentView] = useState<DocumentView>('preview');
+  const viewRef = useRef<DocumentView>('preview');
+  const loadedRoute = useRef<number | undefined>(undefined);
+  const sourcePositions = useRef(new Map<string, number>());
+  const sourceText = useRef<HTMLPreElement>(null);
+  const selectSource = useRef(false);
   const reader = useRef<HTMLElement>(null);
   const article = useRef<HTMLElement>(null);
   const dataRef = useRef<DocumentData | undefined>(undefined);
@@ -48,7 +55,7 @@ export function App() {
   const maxHistoryIndex = useRef(0);
   const serial = useRef(0);
   const lastPosition = useRef<ReadingPosition>({ top: 0 });
-  const restore = useRef<{ hash?: string; position?: ReadingPosition }>({});
+  const restore = useRef<{ hash?: string; position?: ReadingPosition; sourceTop?: number }>({});
   const preferenceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pendingPreferences = useRef<Preferences>({});
   const initialized = useRef(false);
@@ -66,6 +73,11 @@ export function App() {
   const capturePosition = useCallback((): ReadingPosition => {
     const pane = reader.current;
     if (!pane) return lastPosition.current;
+    // Source offsets stay in this reader session, separate from preview history.
+    if (viewRef.current === 'source' && dataRef.current) {
+      sourcePositions.current.set(dataRef.current.path, pane.scrollTop);
+      return preferences.current.positions?.[dataRef.current.path] || { top: 0 };
+    }
     const top = pane.scrollTop;
     const boundary = pane.getBoundingClientRect().top;
     const headings = Array.from(article.current?.querySelectorAll<HTMLElement>('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]') || []);
@@ -119,6 +131,22 @@ export function App() {
     if (window.innerWidth < 1180) setOutline(false);
   }, [rememberPosition]);
 
+  const changeView = useCallback((view: DocumentView) => {
+    if (dataRef.current?.kind !== 'markdown' || viewRef.current === view) return;
+    rememberPosition();
+    restore.current = { position: preferences.current.positions?.[dataRef.current.path], sourceTop: sourcePositions.current.get(dataRef.current.path) || 0 };
+    viewRef.current = view; setDocumentView(view); setNotice('');
+    setViewVersion(value => value + 1);
+    if (window.parent !== window) window.parent.postMessage({ type: 'halite:view-changed' }, location.origin);
+  }, [rememberPosition]);
+
+  const copyFailure = useCallback(() => {
+    selectSource.current = true;
+    changeView('source');
+    setNotice('Clipboard access is unavailable. The Markdown source is selected; press Ctrl+C or ⌘C to copy.');
+    setViewVersion(value => value + 1);
+  }, [changeView]);
+
   useEffect(() => {
     const pop = (event: PopStateEvent) => {
       const previous = dataRef.current?.path;
@@ -138,6 +166,10 @@ export function App() {
     const controller = new AbortController();
     setLoading(true); setError('');
     api<DocumentData>(`/api/document?path=${encodeURIComponent(route.path)}`, { signal: controller.signal }).then(document => {
+      if (loadedRoute.current !== route.serial || document.kind !== 'markdown') {
+        viewRef.current = 'preview'; setDocumentView('preview'); selectSource.current = false;
+      }
+      loadedRoute.current = route.serial;
       dataRef.current = document; setData(document); setLoading(false);
       setExpanded(previous => new Set([...previous, ...parents(document.path)]));
       setFocus(previous => previous && document.path && !document.path.startsWith(`${previous}/`) ? '' : previous);
@@ -158,7 +190,12 @@ export function App() {
     if (!data || !reader.current) return;
     const pane = reader.current;
     const target = restore.current;
+    const sourceTop = target.sourceTop ?? sourcePositions.current.get(data.path) ?? 0;
     const apply = () => {
+      if (viewRef.current === 'source') {
+        pane.scrollTop = sourceTop;
+        return;
+      }
       const hash = target.hash || target.position?.heading;
       const element = hash ? Array.from(article.current?.querySelectorAll<HTMLElement>('[id]') || []).find(node => node.id === hash) : undefined;
       if (element) {
@@ -169,6 +206,14 @@ export function App() {
       capturePosition();
     };
     const frame = requestAnimationFrame(apply);
+    if (selectSource.current && sourceText.current) {
+      selectSource.current = false;
+      sourceText.current.focus({ preventScroll: true });
+      const selection = window.getSelection();
+      const range = window.document.createRange();
+      range.selectNodeContents(sourceText.current);
+      selection?.removeAllRanges(); selection?.addRange(range);
+    }
     // Diagrams and images can change layout after the text becomes visible.
     const observer = new ResizeObserver(apply);
     if (article.current) observer.observe(article.current);
@@ -190,7 +235,7 @@ export function App() {
     };
     pane.addEventListener('scroll', onScroll, { passive: true }); onScroll();
     return () => { clearTimeout(timer); pane.removeEventListener('scroll', onScroll); };
-  }, [data, headings, capturePosition, rememberPosition]);
+  }, [data, headings, documentView, capturePosition, rememberPosition]);
 
   useEffect(() => {
     if (!bootstrap) return;
@@ -277,7 +322,8 @@ export function App() {
         <button className="icon-button" aria-label="Go back" title="Go back" disabled={historyIndex.current <= 0} data-history-version={historyVersion} onClick={() => history.back()}><ArrowLeft size={18} /></button>
         <button className="icon-button" aria-label="Go forward" title="Go forward" disabled={historyIndex.current >= maxHistoryIndex.current} onClick={() => history.forward()}><ArrowRight size={18} /></button>
       </div><div className="breadcrumbs"><button onClick={() => navigate('')} title="Project root">{bootstrap?.name || 'Project'}</button>{breadcrumbs.map((part, index) => <span key={index}><ChevronRight size={12} />{index < breadcrumbs.length - 1 ? <button onClick={() => navigate(breadcrumbs.slice(0, index + 1).join('/'))}>{part}</button> : <strong title={displayedPath}>{part}</strong>}</span>)}</div>
-      <div className="toolbar-actions"><div className="font-controls"><Type size={16} /><button aria-label="Decrease text size" title="Decrease text size" disabled={fontSize <= 14} onClick={() => setFontSize(size => size - 1)}>−</button><button aria-label="Increase text size" title="Increase text size" disabled={fontSize >= 24} onClick={() => setFontSize(size => size + 1)}>+</button></div><button className={`icon-button ${outline ? 'pressed' : ''}`} aria-label={outline ? 'Hide outline' : 'Show outline'} title="Document outline" onClick={() => setOutline(!outline)}><List size={19} /></button></div></nav>
+      <div className="toolbar-actions"><div className="font-controls"><Type size={16} /><button aria-label="Decrease text size" title="Decrease text size" disabled={fontSize <= 14} onClick={() => setFontSize(size => size - 1)}>−</button><button aria-label="Increase text size" title="Increase text size" disabled={fontSize >= 24} onClick={() => setFontSize(size => size + 1)}>+</button></div><button className={`icon-button ${outline ? 'pressed' : ''}`} aria-label={outline ? 'Hide outline' : 'Show outline'} title="Document outline" disabled={documentView === 'source'} onClick={() => setOutline(!outline)}><List size={19} /></button></div></nav>
+      {data?.kind === 'markdown' && !error && <DocumentActions key={data.path} content={data.content} view={documentView} disabled={loading} onView={changeView} onCopyFailure={copyFailure} />}
       {notice && <div className="notice" role="status"><AlertCircle size={16} /><span>{notice}</span><button className="icon-button" aria-label="Dismiss notice" onClick={() => setNotice('')}><X size={16} /></button></div>}
       {!connected && <div className="connection-notice" role="status">Connection lost. Reconnecting to the local viewer…</div>}
       <div className="reader-layout"><main className="reader" ref={reader} tabIndex={0} aria-label="Document" aria-busy={loading}>
@@ -286,12 +332,12 @@ export function App() {
         {data && !error && <div className="document-content">
           <div className="document-meta"><span><FileText size={14} />{data.kind === 'markdown' ? 'MARKDOWN' : data.kind === 'text' ? 'TEXT PREVIEW' : 'FOLDER'}</span><span>{data.kind !== 'directory' && `${Math.max(1, Math.ceil(words / 220))} min read`}{loading && <LoaderCircle size={13} className="spinning" />}</span></div>
           <article ref={article} className="prose" style={{ fontSize }}>
-            {data.kind === 'markdown' ? <Markdown content={data.content} path={data.path} theme={theme} revision={revision} onNavigate={navigate} onNotice={setNotice} /> : data.kind === 'text' ? <><h1>{data.path.split('/').pop()}</h1><CodeBlock code={data.content} language={language} /></> : <><h1>{data.path.split('/').pop() || bootstrap?.name}</h1><p className="folder-intro">Documents in this folder</p><div className="folder-list">{data.entries?.map(entry => <button key={entry.path} onClick={() => navigate(entry.path)}>{entry.directory ? <Folder size={20} /> : <FileText size={20} />}<span>{entry.name}</span><ChevronRight size={17} /></button>)}{!data.entries?.length && <p>No Markdown documents here. Use the explorer or quick open to find another file.</p>}</div></>}
+            {data.kind === 'markdown' ? documentView === 'source' ? <pre className="markdown-source" ref={sourceText} tabIndex={0} aria-label="Markdown source"><code>{data.content}</code></pre> : <Markdown content={data.content} path={data.path} theme={theme} revision={revision} onNavigate={navigate} onNotice={setNotice} /> : data.kind === 'text' ? <><h1>{data.path.split('/').pop()}</h1><CodeBlock code={data.content} language={language} /></> : <><h1>{data.path.split('/').pop() || bootstrap?.name}</h1><p className="folder-intro">Documents in this folder</p><div className="folder-list">{data.entries?.map(entry => <button key={entry.path} onClick={() => navigate(entry.path)}>{entry.directory ? <Folder size={20} /> : <FileText size={20} />}<span>{entry.name}</span><ChevronRight size={17} /></button>)}{!data.entries?.length && <p>No Markdown documents here. Use the explorer or quick open to find another file.</p>}</div></>}
           </article>
           {data.kind !== 'directory' && <footer className="document-end"><span>End of document</span><button onClick={() => reader.current?.scrollTo({ top: 0, behavior: 'smooth' })}>Back to top ↑</button></footer>}
         </div>}
       </main>
-      {outline && <aside className="outline" aria-label="Document outline"><div className="sidebar-heading"><span>ON THIS PAGE</span><button className="icon-button" aria-label="Hide outline" onClick={() => setOutline(false)}><PanelRightClose size={16} /></button></div><nav>{headings.map(heading => <a key={heading.id} href={documentUrl(displayedPath, heading.id)} className={activeHeading === heading.id ? 'active' : ''} style={{ paddingLeft: 12 + Math.max(0, heading.depth - 2) * 11 }} onClick={event => { event.preventDefault(); navigate(displayedPath, heading.id); }}>{heading.text}</a>)}{!headings.length && <p className="sidebar-empty">{data?.kind === 'markdown' ? 'This document has no headings.' : 'Headings appear here for Markdown documents.'}</p>}</nav><div className="reading-progress"><div><span>Reading progress</span><span>{progress}%</span></div><div className="progress-track"><div style={{ width: `${progress}%` }} /></div></div></aside>}
+      {outline && documentView === 'preview' && <aside className="outline" aria-label="Document outline"><div className="sidebar-heading"><span>ON THIS PAGE</span><button className="icon-button" aria-label="Hide outline" onClick={() => setOutline(false)}><PanelRightClose size={16} /></button></div><nav>{headings.map(heading => <a key={heading.id} href={documentUrl(displayedPath, heading.id)} className={activeHeading === heading.id ? 'active' : ''} style={{ paddingLeft: 12 + Math.max(0, heading.depth - 2) * 11 }} onClick={event => { event.preventDefault(); navigate(displayedPath, heading.id); }}>{heading.text}</a>)}{!headings.length && <p className="sidebar-empty">{data?.kind === 'markdown' ? 'This document has no headings.' : 'Headings appear here for Markdown documents.'}</p>}</nav><div className="reading-progress"><div><span>Reading progress</span><span>{progress}%</span></div><div className="progress-track"><div style={{ width: `${progress}%` }} /></div></div></aside>}
       </div>
       <footer className="statusbar"><span title={displayedPath}>{displayedPath || 'Project documents'}</span><span><span className={`status-dot ${connected ? '' : 'offline'}`} />{connected ? 'Watching for changes' : 'Reconnecting'}</span></footer>
     </div>

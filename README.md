@@ -12,7 +12,7 @@ Your documents stay in their original directories.
 Named after halite, the crystalline form of sodium chloride (NaCl).
 By [M. Kim](https://github.com/m-kim-dev).
 
-The marketing page is hosted on Cloudflare Pages. See its [build and deployment guide](docs/marketing.md).
+The marketing page is hosted on Cloudflare Pages. See its [build and deployment guide](docs/marketing/site.md).
 
 Source is available under the [MIT license](LICENSE). The planned paid desktop
 downloads support packaging and maintenance; building from source stays an option.
@@ -27,16 +27,16 @@ downloads support packaging and maintenance; building from source stays an optio
 The desktop preview adds project tabs, optional separate windows, a native
 folder/file picker, recent projects, and a built-in example. All projects share
 one local backend and one port, including projects opened from the CLI. Its packages include the runtime, so readers do not need Node.
-See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.2.0-preview.1/docs/linux-preview.md) for installation,
+See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.3.0-preview.1/docs/guides/linux-preview.md) for installation,
 preview limitations, and feedback prompts.
 
-[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1) ·
+[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1) ·
 [Join the preview testers](https://github.com/m-kim-dev/halite/discussions/1) ·
 [Report a problem or share feedback](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml)
 
 The current preview and CLI are free to try. The proposed desktop price is
 **$19 once** after installation and usage have been validated. Purchasing is not
-available yet. See the [launch plan](docs/monetization.md).
+available yet. See the [launch plan](docs/business/monetization.md).
 
 To build locally on Linux (requires Node, npm, `tar`, and `dpkg-deb`):
 
@@ -48,7 +48,7 @@ npm run package:linux
 This produces `.deb` and `.tar.gz` files with SHA-256 checksums under `release/`.
 The `.deb` passed installation, sandboxed workflows, a synthetic revision upgrade,
 and removal in Debian 12 and Ubuntu 24.04 x64 containers. Real desktop sessions
-still need tester feedback; see the [validation record](docs/validation.md).
+still need tester feedback; see the [validation record](docs/engineering/validation.md).
 
 ## Run the CLI
 
@@ -134,10 +134,12 @@ service. Recent projects and preferences persist; open tabs are not restored
 after a service restart. Reopen Halite to obtain fresh workspace URLs.
 
 The Linux packages include a `halite` CLI launcher using their bundled runtime,
-as well as `halite-desktop`. See the [architecture and design](docs/multiple-projects.md).
+as well as `halite-desktop`. See the [architecture and design](docs/engineering/multiple-projects.md).
 
 ## Reading features
 
+- **Preview / Source** for original, read-only Markdown, and **Copy Markdown**
+  from either view. Source and Preview keep separate reading positions.
 - A Markdown file explorer, folder filtering, and fuzzy quick open across
   filenames, paths, and document titles.
 - A heading outline, breadcrumbs, and back/forward navigation with restored
@@ -216,7 +218,7 @@ viewer follows those changes.
 For the desktop shell, first run `npm run build` and `npm run desktop:setup`,
 then `npm run desktop`. The setup command downloads Electron's runtime.
 `npm run test:desktop` verifies a built Linux archive in a temporary installation;
-see [release instructions](docs/releasing.md) for its sandbox requirements.
+see [release instructions](docs/engineering/releasing.md) for its sandbox requirements.
 
 ```bash
 # TypeScript server and Vite UI with development refresh.
@@ -250,8 +252,11 @@ repositories may take longer to index because discovery and watching are local.
 
 ## Learn the implementation
 
-- [Design and rationale](docs/design.md): the original requirements and tradeoffs.
-- [Implementation walkthrough](docs/architecture.md): follow a command, request,
+See the [documentation index](docs/README.md) for user guides, engineering,
+release notes, business materials, and marketing documentation.
+
+- [Design and rationale](docs/engineering/design.md): the original requirements and tradeoffs.
+- [Implementation walkthrough](docs/engineering/architecture.md): follow a command, request,
   document, and file-change notification through the code.
-- [Validation record](docs/validation.md): what has been checked and what the
+- [Validation record](docs/engineering/validation.md): what has been checked and what the
   results establish.

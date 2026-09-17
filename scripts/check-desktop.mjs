@@ -79,6 +79,14 @@ try {
   expect(await document.evaluate(async () => (await navigator.permissions.query({ name: 'clipboard-write' })).state)).toBe('granted');
   expect(await document.evaluate(async () => (await navigator.permissions.query({ name: 'clipboard-read' })).state)).toBe('denied');
   await page.screenshot({ path: path.join(output, 'reader.png') });
+  const exampleMarkdown = await readFile(path.join(root, 'desktop/example/README.md'), 'utf8').catch(async () => (await (await fetch(new URL('/api/projects/' + new URL(document.url()).pathname.split('/')[2] + '/document?path=README.md', serviceURL))).json()).content);
+  await document.getByRole('button', { name: 'Copy Markdown', exact: true }).click();
+  await expect(document.getByRole('button', { name: 'Copy Markdown', exact: true })).toHaveText('Copied!');
+  expect(await application.evaluate(({ clipboard }) => clipboard.readText())).toBe(exampleMarkdown);
+  await document.getByRole('group', { name: 'Document view' }).getByRole('button', { name: 'Source', exact: true }).click();
+  expect(await document.locator('.markdown-source').textContent()).toBe(exampleMarkdown);
+  await page.screenshot({ path: path.join(output, 'markdown-source.png') });
+  await document.getByRole('button', { name: 'Preview', exact: true }).click();
   await document.getByRole('link', { name: 'crystal notes', exact: true }).click();
   await expect(document.locator('.katex-display')).toHaveCount(2);
   await checkFind(application, document, output, errors);
@@ -98,7 +106,16 @@ try {
   await expect(page.getByRole('tab')).toHaveCount(2);
   const documentFile = path.join(fixture, 'docs/README.md');
   const before = await readFile(documentFile, 'utf8');
+  await document.getByRole('button', { name: 'Source', exact: true }).click();
+  await page.getByRole('tab', { name: 'example', exact: true }).click();
+  await page.getByRole('tab', { name: 'my-project', exact: true }).click();
+  await expect(document.getByRole('button', { name: 'Source', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await writeFile(documentFile, `${before}\nDesktop live refresh works.\n`);
+  await expect(document.locator('.markdown-source')).toContainText('Desktop live refresh works.', { timeout: 10000 });
+  await document.getByRole('button', { name: 'Copy Markdown', exact: true }).click();
+  await expect(document.getByRole('button', { name: 'Copy Markdown', exact: true })).toHaveText('Copied!');
+  expect(await application.evaluate(({ clipboard }) => clipboard.readText())).toBe(`${before}\nDesktop live refresh works.\n`);
+  await document.getByRole('button', { name: 'Preview', exact: true }).click();
   await expect(document.locator('.prose')).toContainText('Desktop live refresh works.', { timeout: 10000 });
   await document.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect.poll(async () => (await (await fetch(`${projectOrigin}/bootstrap`)).json()).preferences.theme).toBe('dark');
@@ -155,7 +172,7 @@ try {
   await expect(page.locator('.recent-project-list')).toContainText('No recent projects yet.');
   expect(JSON.parse(await readFile(path.join(env.HALITE_STATE_DIR, 'workspace-settings.json'), 'utf8')).recents).toEqual([]);
   expect(errors).toEqual([]);
-  console.log(`${source ? 'Source app' : installedBinary ? 'System package' : 'Desktop archive'} passed: welcome, example, diagrams, math, document find (counts, buttons, keyboard, case, navigation cleanup), source preview, folder picker callback, IPC isolation, live refresh, project tabs, moving between windows, recent projects, restart, preferences, and shared-service cleanup.`);
+  console.log(`${source ? 'Source app' : installedBinary ? 'System package' : 'Desktop archive'} passed: welcome, example, diagrams, math, document find, Markdown source/preview, real clipboard copying, live source refresh, view retention across project tabs, source file preview, folder picker callback, IPC isolation, moving between windows, recent projects, restart, preferences, and shared-service cleanup.`);
   console.log(`Chromium sandbox: ${process.env.HALITE_TEST_NO_SANDBOX === '1' ? 'disabled by explicit test override' : 'enabled'}. Screenshots: test-results/desktop/`);
 } catch (error) {
   console.error('Desktop check failed:', error);

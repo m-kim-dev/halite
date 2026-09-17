@@ -1,7 +1,7 @@
 # Halite checkout setup packet
 
 Prepared 2026-09-14; updated 2026-09-17. This is an unpublished checkout setup
-draft for the proposed paid 1.x release. The 0.2.0 preview stays free. The merchant
+draft for the proposed paid 1.x release. The 0.3.0 preview stays free. The merchant
 application has been submitted and additional product information requested.
 Live checkout and fulfillment have not been verified; paid sales have not started.
 
@@ -24,7 +24,7 @@ Use **Halite — Markdown reader** as the public store identity if available.
 The product website is <https://halite-reader.pages.dev/>.
 The page includes a playable demo, current downloads, detailed planned pricing,
 developer profiles, and contact information. Its source and deployment process
-are documented in [the marketing guide](marketing.md).
+are documented in [the marketing guide](../marketing/site.md).
 Public technical support is <https://github.com/m-kim-dev/halite/issues>.
 Add an owner-controlled private support email before taking payments; billing
 details and refund requests do not belong in public GitHub issues.
@@ -41,7 +41,7 @@ details and refund requests do not belong in public GitHub issues.
 | Delivery | Hosted installer and checksum downloads |
 | Updates | All 1.x versions, downloaded and installed manually |
 | Support link | https://github.com/m-kim-dev/halite/issues |
-| Installation link | https://github.com/m-kim-dev/halite/blob/main/docs/linux-preview.md |
+| Installation link | https://github.com/m-kim-dev/halite/blob/main/docs/guides/linux-preview.md |
 | Source link | https://github.com/m-kim-dev/halite |
 
 Select the appropriate software tax category in the dashboard and inspect how
@@ -50,8 +50,8 @@ installer and checksum when ready; the free preview can exercise test-mode
 configuration but must not be advertised as a finished 1.x build.
 [Product setup](https://docs.lemonsqueezy.com/help/products/adding-products).
 
-Ready media: [reader screenshot](images/halite-reader.png) and
-[welcome screenshot](images/halite-welcome.png). Both show Halite's bundled
+Ready media: [reader screenshot](../images/halite-reader.png) and
+[welcome screenshot](../images/halite-welcome.png). Both show Halite's bundled
 example rather than private documents.
 
 ## Checkout description

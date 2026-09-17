@@ -5,21 +5,21 @@ and a React interface in your browser. Both run locally. The project directory
 is the document store; the viewer maintains a separate, small preferences file.
 
 This walkthrough explains the first implementation. The [design notes](design.md)
-explain why these behaviors were chosen, and the [README](../README.md) contains
+explain why these behaviors were chosen, and the [README](../../README.md) contains
 the commands needed to run it.
 
 ## Desktop and CLI entry points
 
-[server/cli.ts](../server/cli.ts) uses [client.ts](../server/client.ts) to find or
-start a single background [daemon](../server/daemon.ts). Commands travel over a
+[server/cli.ts](../../server/cli.ts) uses [client.ts](../../server/client.ts) to find or
+start a single background [daemon](../../server/daemon.ts). Commands travel over a
 private Unix socket. The daemon owns one loopback HTTP listener and the
-[workspace registry](../server/workspaces.ts). Each canonical root has one
-[project session](../server/session.ts): index, watcher, and preference store.
+[workspace registry](../../server/workspaces.ts). Each canonical root has one
+[project session](../../server/session.ts): index, watcher, and preference store.
 Opening the same root through a file or symlink activates its existing tab.
 
-[desktop/main.cjs](../desktop/main.cjs) connects to this service using Electron's
+[desktop/main.cjs](../../desktop/main.cjs) connects to this service using Electron's
 bundled Node runtime. Each native window displays one workspace. The browser
-uses the same [Workspace](../src/Workspace.tsx) component. Its project readers
+uses the same [Workspace](../../src/Workspace.tsx) component. Its project readers
 are separate frames, retained while inactive. One workspace event stream carries
 all project changes; the workspace forwards updates to the relevant reader.
 Moving a tab preserves its project session and restores the reader's saved place.
@@ -65,12 +65,12 @@ flowchart LR
     Parser --> Outline[Heading outline]
 ```
 
-Start with [server/cli.ts](../server/cli.ts). It parses the path and options,
+Start with [server/cli.ts](../../server/cli.ts). It parses the path and options,
 connects to the service, sends an open request, and exits. Development mode still
 runs an isolated reader in the foreground and handles Ctrl-C. The
 compiled entry point includes a shebang, so npm can expose it as `halite`.
 
-[server/project.ts](../server/project.ts) resolves the path to its canonical
+[server/project.ts](../../server/project.ts) resolves the path to its canonical
 filesystem location. A containing `.git` marker identifies a project; otherwise
 the supplied directory becomes the root. Every subsequent request uses this
 same boundary.
@@ -86,7 +86,7 @@ The root and the sidebar's focus serve different purposes.
 
 ## The small HTTP API
 
-[server/app.ts](../server/app.ts) uses Node's built-in HTTP server. During
+[server/app.ts](../../server/app.ts) uses Node's built-in HTTP server. During
 development it delegates UI requests to Vite. After a build, it serves
 `dist/client` itself. Production does not need a separate Vite process.
 
@@ -110,7 +110,7 @@ produce an HTTP status and a readable message.
 The server validates local host/origin headers and checks path confinement both
 before and after symlink resolution. There is no project write endpoint. The
 preferences endpoint accepts only a bounded set of viewer fields. See
-[server/preferences.ts](../server/preferences.ts) for validation, serialized
+[server/preferences.ts](../../server/preferences.ts) for validation, serialized
 writes, and atomic replacement of the JSON file.
 
 **Learning point:** read-only behavior is easier to maintain when the backend
@@ -123,7 +123,7 @@ The Markdown pipeline uses `react-markdown` and unified/remark. Parsing produces
 a syntax tree: headings, paragraphs, links, code, and math have separate node
 types. React components turn those nodes into the reading UI.
 
-[src/lib/markdown.ts](../src/lib/markdown.ts) supplies shared heading logic and
+[src/lib/markdown.ts](../../src/lib/markdown.ts) supplies shared heading logic and
 the math compatibility extension. Heading anchors and the outline use the same
 slugging algorithm, including suffixes for duplicate headings. A heading-looking
 line inside a code fence never enters the outline.
@@ -140,7 +140,7 @@ immediately before a digit. This preserves financial prose such as
 `$10,000 long and $5,000 short` while still rendering `$2+2$` and `$t+1$`.
 Ambiguous currency can use escaped dollar signs.
 
-[src/components/Markdown.tsx](../src/components/Markdown.tsx) owns block rendering:
+[src/components/Markdown.tsx](../../src/components/Markdown.tsx) owns block rendering:
 
 - Shiki uses its JavaScript regex engine, loads languages on demand, and caches
   recent results. This works with the production policy against dynamic code
@@ -161,12 +161,12 @@ is why a global string replacement would be unreliable.
 
 ## Navigation preserves context
 
-[src/lib/navigation.ts](../src/lib/navigation.ts) resolves links into a local
+[src/lib/navigation.ts](../../src/lib/navigation.ts) resolves links into a local
 path/fragment, an external URL, or a blocked link with an explanation. The viewer
 URL stores the project path in a query parameter so spaces and nested folders
 remain unambiguous.
 
-[src/App.tsx](../src/App.tsx) coordinates requests, history, the outline, and
+[src/App.tsx](../../src/App.tsx) coordinates requests, history, the outline, and
 reading positions. Requests have abort signals so an earlier response cannot
 overwrite a newer selection.
 
@@ -180,15 +180,15 @@ position per file. These solve different problems: returning to a particular
 visit versus reopening a file later. Reload uses the current history position
 so an old URL fragment does not pull you back to an earlier section.
 
-[server/preferences.ts](../server/preferences.ts) keys each preferences file by
+[server/preferences.ts](../../server/preferences.ts) keys each preferences file by
 the canonical project root. Halite uses its own user state directory and reads
 the former `markdown-viewer` file when no Halite file exists. The next save
 retains those settings in the new directory without changing the original.
-Explicit state directories take precedence; see [Preferences](../README.md#preferences)
+Explicit state directories take precedence; see [Preferences](../../README.md#preferences)
 for the environment variables and their precedence.
 
-The [explorer](../src/components/Explorer.tsx) follows the project hierarchy.
-[Quick open](../src/components/QuickOpen.tsx) searches filenames, paths, and
+The [explorer](../../src/components/Explorer.tsx) follows the project hierarchy.
+[Quick open](../../src/components/QuickOpen.tsx) searches filenames, paths, and
 titles, ranking exact names before broader and fuzzy matches. A native modal
 dialog provides focus handling and Escape behavior. Full-text search is future
 work.
@@ -219,14 +219,14 @@ reconnecting.
 
 ## Files to read in order
 
-1. [shared/types.ts](../shared/types.ts): server/UI data contracts.
-2. [server/cli.ts](../server/cli.ts): starting the application.
-3. [server/project.ts](../server/project.ts): discovery and bounded reads.
-4. [server/app.ts](../server/app.ts): endpoints and change notifications.
-5. [src/App.tsx](../src/App.tsx): selection, history, and layout.
-6. [src/lib/markdown.ts](../src/lib/markdown.ts): syntax and heading extensions.
-7. [src/components/Markdown.tsx](../src/components/Markdown.tsx): rendering blocks.
-8. [tests](../tests/): behavioral checks and independent examples.
+1. [shared/types.ts](../../shared/types.ts): server/UI data contracts.
+2. [server/cli.ts](../../server/cli.ts): starting the application.
+3. [server/project.ts](../../server/project.ts): discovery and bounded reads.
+4. [server/app.ts](../../server/app.ts): endpoints and change notifications.
+5. [src/App.tsx](../../src/App.tsx): selection, history, and layout.
+6. [src/lib/markdown.ts](../../src/lib/markdown.ts): syntax and heading extensions.
+7. [src/components/Markdown.tsx](../../src/components/Markdown.tsx): rendering blocks.
+8. [tests](../../tests): behavioral checks and independent examples.
 
 Styles live in `src/styles.css` and `src/reader.css`: interface tokens/layout in
 the first, document typography in the second. This first version uses regular

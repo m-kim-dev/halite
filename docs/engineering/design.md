@@ -2,7 +2,7 @@
 
 Recorded: 2026-09-14. The first reader is now implemented. This document retains
 the initial design reasoning; see the [implementation walkthrough](architecture.md)
-and [run guide](../README.md) for the actual code and current behavior.
+and [run guide](../../README.md) for the actual code and current behavior.
 
 ## Product direction
 
