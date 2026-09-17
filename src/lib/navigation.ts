@@ -22,14 +22,21 @@ export function resolveLink(href: string, currentPath: string): ResolvedLink {
   } catch { return { kind: 'blocked', reason: 'This link is malformed.' }; }
 }
 
+export function projectPrefix() {
+  return typeof location === 'undefined' ? '' : location.pathname.match(/^\/projects\/[a-f0-9-]+/)?.[0] || '';
+}
+export function apiUrl(endpoint: string) {
+  const prefix = projectPrefix();
+  return prefix ? `/api${prefix}${endpoint.replace(/^\/api/, '')}` : endpoint;
+}
 export function documentUrl(path: string, hash = '') {
-  return `/?path=${encodeURIComponent(path)}${hash ? `#${encodeURIComponent(hash)}` : ''}`;
+  return `${projectPrefix()}/?path=${encodeURIComponent(path)}${hash ? `#${encodeURIComponent(hash)}` : ''}`;
 }
 
 export function assetUrl(href: string, currentPath: string, revision = 0): string | undefined {
   const link = resolveLink(href, currentPath);
   if (link.kind === 'external' && /^https?:/i.test(link.href)) return link.href;
-  if (link.kind === 'local') return `/api/asset?path=${encodeURIComponent(link.path)}&v=${revision}`;
+  if (link.kind === 'local') return `${apiUrl('/api/asset')}?path=${encodeURIComponent(link.path)}&v=${revision}`;
   return undefined;
 }
 

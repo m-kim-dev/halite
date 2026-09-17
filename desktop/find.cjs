@@ -1,17 +1,25 @@
 const { BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { isReader } = require('./policy.cjs');
+const { isReader, isWorkspace } = require('./policy.cjs');
 
 const findURL = 'halite://app/find.html';
+const controllers = new Map();
+function trustedController(event) {
+  const controller = controllers.get(event.sender.id);
+  if (!controller || event.senderFrame !== event.sender.mainFrame || event.senderFrame.url !== findURL) throw new Error('Find is only available from its built-in panel.');
+  return controller;
+}
+ipcMain.handle('halite:find-query', (event, text, options) => trustedController(event).search(text, options && typeof options === 'object' ? options : {}));
+ipcMain.handle('halite:find-close', event => trustedController(event).close());
 
-function createFindController(parent, readerOrigin) {
+function createFindController(parent, readerOrigin, activeProject = () => undefined) {
   let panel;
   let query = '';
   let matchCase = false;
   let requestId;
   let documentKey;
   const key = url => { try { const parsed = new URL(url); return parsed.origin + parsed.pathname + parsed.search; } catch { return url; } };
-  const readable = () => !parent.isDestroyed() && isReader(parent.webContents.getURL(), readerOrigin());
+  const readable = () => !parent.isDestroyed() && (isReader(parent.webContents.getURL(), readerOrigin()) || isWorkspace(parent.webContents.getURL(), readerOrigin()));
   const send = result => {
     if (panel && !panel.isDestroyed()) panel.webContents.send('halite:find-result', result);
   };
@@ -44,7 +52,7 @@ function createFindController(parent, readerOrigin) {
   };
   const open = async () => {
     if (!readable()) return;
-    documentKey = key(parent.webContents.getURL());
+    documentKey = key(parent.webContents.mainFrame.frames.find(frame => frame.url.includes(`/projects/${activeProject()}/`))?.url || parent.webContents.getURL());
     if (panel && !panel.isDestroyed()) {
       panel.show(); panel.focus(); panel.webContents.send('halite:find-focus'); return;
     }
@@ -56,10 +64,13 @@ function createFindController(parent, readerOrigin) {
       webPreferences: { preload: path.join(__dirname, 'find-preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true },
     });
     const opened = panel;
+    const panelId = opened.webContents.id;
+    controllers.set(panelId, { search, close });
     opened.setMenu(null);
     opened.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     opened.webContents.on('will-navigate', (event, url) => { if (url !== findURL) event.preventDefault(); });
     opened.on('closed', () => {
+      controllers.delete(panelId);
       if (panel === opened) {
         panel = undefined;
         query = ''; requestId = undefined;
@@ -71,37 +82,22 @@ function createFindController(parent, readerOrigin) {
     if (!opened.isDestroyed() && readable()) { opened.show(); opened.focus(); }
   };
   const next = forward => query ? search(query, { findNext: true, forward, matchCase }) : open();
-  const trusted = event => panel && !panel.isDestroyed()
-    && event.sender === panel.webContents && event.senderFrame === panel.webContents.mainFrame
-    && event.senderFrame.url === findURL;
-  ipcMain.handle('halite:find-query', (event, text, options) => {
-    if (!trusted(event)) throw new Error('Find is only available from its built-in panel.');
-    search(text, options && typeof options === 'object' ? options : {});
-  });
-  ipcMain.handle('halite:find-close', event => {
-    if (!trusted(event)) throw new Error('Find is only available from its built-in panel.');
-    close();
-  });
   parent.webContents.on('found-in-page', (_event, result) => {
     if (result.requestId === requestId && result.finalUpdate) {
       send({ matches: result.matches, activeMatchOrdinal: result.activeMatchOrdinal, empty: false });
     }
   });
   parent.webContents.on('did-start-navigation', details => {
-    if (details.isMainFrame && !details.isSameDocument) close(false);
+    if (!details.isSameDocument) close(false);
   });
   parent.webContents.on('did-navigate-in-page', (_event, url, isMainFrame) => {
     // Reading-position saves use history.replaceState on the same document.
     // Keep find open through those updates, but clear it for another file.
-    if (isMainFrame && key(url) !== documentKey) { documentKey = key(url); close(false); }
+    if ((!activeProject() || url.includes(`/projects/${activeProject()}/`)) && key(url) !== documentKey) { documentKey = key(url); close(false); }
   });
   parent.on('move', position);
   parent.on('resize', position);
-  parent.on('closed', () => {
-    ipcMain.removeHandler('halite:find-query');
-    ipcMain.removeHandler('halite:find-close');
-  });
-  return { open, close, next };
+  return { open, close, next, isFocused: () => Boolean(panel && !panel.isDestroyed() && panel.isFocused()) };
 }
 
 module.exports = { createFindController };

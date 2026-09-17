@@ -9,6 +9,8 @@ Initial dependency/runtime setup needs the network; desktop users need no Node.
 npm ci
 npm run check
 npm run test:e2e
+npm run test:cli
+npm run test:workspace
 node scripts/package-linux.mjs
 npm run test:desktop
 ```
@@ -17,8 +19,10 @@ Install the Playwright browser once with `npx playwright install chromium`.
 The desktop test extracts the actual archive, installs it under a temporary
 prefix, removes the source extraction, and launches it with separate settings
 and a temporary project. It checks welcome, example, document find, diagrams/math/source,
-folder-picker callback, preferences, recents, restart, live refresh, and server
-cleanup. Native dialogs are mocked; real picker interaction needs a manual pass.
+folder-picker callback, preferences, recents, restart, live refresh, tabs,
+moving projects between windows, and shared-service shutdown. Browser workspace
+checks exercise eight live projects and CLI activation; CLI checks exercise
+concurrent startup, one process/port, and stale-lock recovery. Native dialogs are mocked; real picker interaction needs a manual pass.
 
 After `npm run build`, `HALITE_TEST_SOURCE=1 npm run test:desktop` checks the
 source app without packaging. This uses the local Electron runtime and does not
@@ -26,7 +30,7 @@ establish archive or package installation behavior. It has the same sandbox
 requirements described below.
 
 `npm run package:linux` combines the build and packaging. It bundles the server,
-copies the client, includes upstream notices, and creates a portable archive,
+copies the client, includes the CLI and daemon entry points plus upstream notices, and creates a portable archive,
 Debian package, and SHA-256 files. Generated files are ignored by Git. Nothing
 is uploaded by this command.
 

@@ -9,9 +9,11 @@ function isWelcome(url) {
 function isReader(url, origin) {
   try {
     const parsed = new URL(url);
-    return Boolean(origin) && parsed.origin === origin && parsed.pathname === '/';
+    return Boolean(origin) && parsed.origin === origin && (parsed.pathname === '/' || /^\/projects\/[a-f0-9-]+\/$/.test(parsed.pathname));
   } catch { return false; }
 }
+
+function isWorkspace(url, expected) { return Boolean(expected) && url === expected && /^http:\/\/127\.0\.0\.1:\d+\/workspaces\/[a-f0-9-]+\/$/.test(url); }
 
 function externalURL(value) {
   try {
@@ -34,4 +36,4 @@ function cleanRecents(value) {
   }).slice(0, 8).map(item => ({ path: item.path, name: path.basename(item.path) || item.path }));
 }
 
-module.exports = { welcomeURL, isWelcome, isReader, externalURL, cleanRecents, readerPermission };
+module.exports = { isWorkspace, welcomeURL, isWelcome, isReader, externalURL, cleanRecents, readerPermission };

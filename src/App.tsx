@@ -6,11 +6,11 @@ import { Explorer } from './components/Explorer';
 import { Markdown, CodeBlock } from './components/Markdown';
 import { QuickOpen } from './components/QuickOpen';
 import { getHeadings } from './lib/markdown';
-import { documentUrl } from './lib/navigation';
+import { apiUrl, documentUrl } from './lib/navigation';
 
 interface Route { path: string; hash: string; serial: number }
 async function api<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, init);
+  const response = await fetch(apiUrl(url), init);
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || 'Unable to load this document.');
   return result;
@@ -194,16 +194,25 @@ export function App() {
 
   useEffect(() => {
     if (!bootstrap) return;
-    const events = new EventSource('/api/events');
-    events.onopen = () => setConnected(true);
-    events.onerror = () => setConnected(false);
-    events.onmessage = event => {
-      const { paths } = JSON.parse(event.data) as { paths: string[] };
+    const refresh = (paths: string[]) => {
       void api<DocFile[]>('/api/files').then(setFiles).catch(() => {});
       if (paths.some(path => path === dataRef.current?.path || /\.(png|jpe?g|svg|gif|webp|avif)$/i.test(path)) || dataRef.current?.kind === 'directory') {
         restore.current = { position: capturePosition() }; setRevision(value => value + 1);
       }
     };
+    if (window.parent !== window) {
+      const receive = (event: MessageEvent) => {
+        if (event.source !== window.parent || event.origin !== location.origin) return;
+        if (event.data?.type === 'halite:files' && Array.isArray(event.data.paths)) refresh(event.data.paths);
+        if (event.data?.type === 'halite:connected') { setConnected(event.data.connected === true); if (event.data.connected) refresh([dataRef.current?.path || '']); }
+      };
+      window.addEventListener('message', receive);
+      return () => window.removeEventListener('message', receive);
+    }
+    const events = new EventSource(apiUrl('/api/events'));
+    events.onopen = () => setConnected(true);
+    events.onerror = () => setConnected(false);
+    events.onmessage = event => refresh(JSON.parse(event.data).paths);
     return () => events.close();
   }, [bootstrap, capturePosition]);
 
@@ -215,7 +224,7 @@ export function App() {
     const flush = () => {
       const path = dataRef.current?.path;
       const patch = { ...pendingPreferences.current, ...(path !== undefined ? { lastPath: path, positions: { ...pendingPreferences.current.positions, [path]: capturePosition() } } : {}) };
-      navigator.sendBeacon('/api/preferences', new Blob([JSON.stringify(patch)], { type: 'application/json' }));
+      navigator.sendBeacon(apiUrl('/api/preferences'), new Blob([JSON.stringify(patch)], { type: 'application/json' }));
     };
     window.addEventListener('keydown', keyboard); window.addEventListener('pagehide', flush);
     return () => { window.removeEventListener('keydown', keyboard); window.removeEventListener('pagehide', flush); clearTimeout(preferenceTimer.current); };
@@ -225,6 +234,27 @@ export function App() {
     const selected = document.querySelector<HTMLElement>('.tree-row.selected');
     selected?.scrollIntoView({ block: 'nearest' });
   }, [data?.path, sidebar]);
+
+  useEffect(() => {
+    if (window.parent === window) return;
+    const receive = (event: MessageEvent) => {
+      if (event.source !== window.parent || event.origin !== location.origin) return;
+      if (event.data?.type === 'halite:navigate' && typeof event.data.path === 'string' && initialized.current) { navigate(event.data.path); window.parent.postMessage({ type: 'halite:navigated' }, location.origin); }
+      if (event.data?.type === 'halite:flush') {
+        const path = dataRef.current?.path;
+        const patch = { ...pendingPreferences.current, ...(path !== undefined ? { lastPath: path, positions: { ...pendingPreferences.current.positions, [path]: capturePosition() } } : {}) };
+        void api('/api/preferences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) }).catch(() => setNotice('Reading preferences could not be saved.')).finally(() => window.parent.postMessage({ type: 'halite:flushed', request: event.data.request }, location.origin));
+      }
+    };
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && ['Tab', 't', 'w', 'n'].includes(event.key)) {
+        event.preventDefault(); window.parent.postMessage({ type: 'halite:shortcut', key: event.key, shift: event.shiftKey }, location.origin);
+      }
+    };
+    window.addEventListener('message', receive); window.addEventListener('keydown', shortcut);
+    window.parent.postMessage({ type: 'halite:ready' }, location.origin);
+    return () => { window.removeEventListener('message', receive); window.removeEventListener('keydown', shortcut); };
+  }, [navigate, capturePosition, bootstrap]);
 
   const toggleFolder = (path: string) => setExpanded(previous => {
     const next = new Set(previous); if (next.has(path)) next.delete(path); else next.add(path);

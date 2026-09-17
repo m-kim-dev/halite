@@ -22,6 +22,8 @@
     "desktop": "electron .",
     "desktop:setup": "node node_modules/electron/install.js",
     "package:linux": "npm run build && node scripts/package-linux.mjs",
+    "test:workspace": "node scripts/check-workspace.mjs",
+    "test:cli": "node scripts/check-cli.mjs",
     "test:desktop": "node scripts/check-desktop.mjs",
     "test:linux": "node scripts/check-linux-package.mjs",
     "check": "npm test && npm run build"

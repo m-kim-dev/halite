@@ -24,7 +24,7 @@ await writeFile(path.join(stage, 'package.json'), JSON.stringify({ name: metadat
 await cp('LICENSE', path.join(stage, 'LICENSE'));
 
 // Keep the same directory layout as the CLI so static assets resolve identically.
-await build({ entryPoints: ['server/app.ts'], outfile: path.join(stage, 'dist/server/server/app.js'), bundle: true, platform: 'node', target: 'node22', format: 'esm', external: ['vite'], banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" } });
+await build({ entryPoints: ['server/app.ts', 'server/client.ts', 'server/daemon.ts', 'server/cli.ts'], outdir: path.join(stage, 'dist/server/server'), bundle: true, platform: 'node', target: 'node22', format: 'esm', external: ['vite'], banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" } });
 
 // Retain upstream license texts, including nested font/component notices.
 const lock = JSON.parse(await readFile('package-lock.json', 'utf8'));

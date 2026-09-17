@@ -20,12 +20,13 @@ downloads support packaging and maintenance; building from source stays an optio
 
 ## Linux desktop preview
 
-The desktop preview adds a native folder/file picker, recent projects, and a
-built-in example. Its packages include the runtime, so readers do not need Node.
-See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.1.0-preview.1/docs/linux-preview.md) for installation,
+The desktop preview adds project tabs, optional separate windows, a native
+folder/file picker, recent projects, and a built-in example. All projects share
+one local backend and one port, including projects opened from the CLI. Its packages include the runtime, so readers do not need Node.
+See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.2.0-preview.1/docs/linux-preview.md) for installation,
 preview limitations, and feedback prompts.
 
-[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1) ·
+[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1) ·
 [Join the preview testers](https://github.com/m-kim-dev/halite/discussions/1) ·
 [Report a problem or share feedback](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml)
 
@@ -55,9 +56,23 @@ npm run build
 npm start -- /path/to/project
 ```
 
-The app opens your browser at **http://127.0.0.1:4173**. Keep the terminal running;
-Ctrl-C stops the service. Use `--no-open` to print the URL without opening a
-browser.
+The command starts or reuses one background service, opens a project tab, and
+exits. The service chooses one available loopback port and prints the workspace
+URL. Later commands reuse that same process and port. Use `--no-open` to print
+the URL without launching a browser. An already-connected workspace receives
+new project tabs without opening another browser tab.
+
+```bash
+npm start -- /path/to/another-project
+npm start -- /path/to/third-project --window
+npm start -- status
+npm start -- stop
+```
+
+`--tab` and `--window` override the saved opening preference. Browser window
+placement and foreground activation depend on the browser; Halite manages its
+desktop windows directly. The shared CLI service supports Linux and macOS;
+Windows shared-service support is not implemented.
 
 Other entry points:
 
@@ -71,7 +86,7 @@ npm start -- /path/to/project/docs/README.md
 # Open a directory without discovering a containing repository.
 npm start -- /path/to/docs --root /path/to/docs
 
-# Choose another port, or use 0 to choose an available port.
+# Choose the service port on its first start (stop it before changing ports).
 npm start -- /path/to/project --port 4174 --no-open
 ```
 
@@ -87,6 +102,35 @@ halite --help
 `npm link` uses your configured npm global prefix. The application itself does not
 require administrator privileges.
 If you previously linked the `mdview` command, rerun `npm link` to register `halite`.
+
+## Working with several projects
+
+![Two projects open in Halite tabs](docs/images/halite-project-tabs.png)
+
+Projects open in tabs by default. Click **+** or use **Ctrl+T** in the desktop
+app to reach recent projects and the open controls. Choose **Open projects in →
+Windows** on that screen to save a different default, or use the File menu's
+explicit **Open Folder in New Tab/Window** commands. **Ctrl+N** creates a window;
+**Ctrl+Tab / Ctrl+Shift+Tab** switch projects and **Ctrl+W** closes a project tab.
+Browser shortcuts may be reserved by the browser; the on-screen controls always
+work. Closing the last project tab shows Welcome.
+
+Right-click a project tab to move it to a new or existing window. Switching tabs
+keeps each reader mounted, including its reading position and navigation history.
+Moving between windows reloads the view and restores its saved document and
+position while retaining the project's index and watcher. Reopening an already
+open project activates its existing tab. The full path is available in a tooltip
+and in the project selector; recent projects can be searched by name or path.
+
+Desktop and CLI use the same service when their `HALITE_STATE_DIR` matches.
+Closing the desktop leaves that service available for the next command. Unused
+project sessions are released after 30 seconds; disconnected browser workspaces
+also have a 30-second reconnect grace period. Use `halite stop` to stop the whole
+service. Recent projects and preferences persist; open tabs are not restored
+after a service restart. Reopen Halite to obtain fresh workspace URLs.
+
+The Linux packages include a `halite` CLI launcher using their bundled runtime,
+as well as `halite-desktop`. See the [architecture and design](docs/multiple-projects.md).
 
 ## Reading features
 
@@ -106,13 +150,14 @@ If you previously linked the `mdview` command, rerun `npm link` to register `hal
 Press **Ctrl+K** or **Cmd+K** to find a document. Use arrow keys and Enter in quick
 open. The explorer supports arrow-key movement, left/right expansion, and Enter
 to open a file. Normal browser **Ctrl/Cmd+F** searches the current document.
-The unreleased 0.2 source adds **Ctrl+F**, next/previous matches with **F3/Shift+F3**,
+The desktop reader provides **Ctrl+F**, next/previous matches with **F3/Shift+F3**,
 and optional case matching. Press **Escape** to close find.
 
 ## Self-hosting and file access
 
-The Node service and browser UI run on your machine. The server listens only on
-`127.0.0.1`. There are no accounts, cloud storage, uploads, or external rendering
+The Node service and browser UI run on your machine. The shared service listens only on
+`127.0.0.1`. New filesystem paths are registered through the private local
+control socket by the CLI or desktop picker; browser actions can reopen recents. There are no accounts, cloud storage, uploads, or external rendering
 services. Scripts, styles, and math fonts are served locally. Remote images and
 external links contained in a document still need their respective network
 destinations.
@@ -129,13 +174,13 @@ an access-control boundary: a supported direct link inside the root can still
 open them.
 
 To run on your own remote machine while retaining loopback-only access, start
-the app there with `--no-open`, then forward the same port from your computer:
+the app there with `--port 4173 --no-open`, then forward the same port from your computer:
 
 ```bash
 ssh -N -L 4173:127.0.0.1:4173 user@your-server
 ```
 
-Open `http://127.0.0.1:4173` locally. Direct LAN/public binding and built-in
+Open the printed workspace URL locally (including its `/workspaces/.../` path). Direct LAN/public binding and built-in
 authentication are not implemented.
 
 ## Preferences
@@ -179,6 +224,8 @@ npm run check
 # Browser checks against a temporary copy of the bundled fixtures.
 npx playwright install chromium
 npm run test:e2e
+npm run test:cli
+npm run test:workspace
 ```
 
 Browser checks use port 4187 and require a production build first. They cover
@@ -193,8 +240,8 @@ JSX is never executed. Arbitrary embedded HTML is displayed as source. Invalid
 diagrams or math show a local fallback. Math follows the supported KaTeX syntax.
 
 Search currently covers names, paths, and titles. Full-text project search,
-internal tabs, split panes, editing, and synchronization are
-future work. Large code blocks and tables scroll horizontally. Extremely large
+document tabs within a project, split panes, editing, and synchronization are
+future work. Project tabs and separate project windows are available in 0.2. Large code blocks and tables scroll horizontally. Extremely large
 repositories may take longer to index because discovery and watching are local.
 
 ## Learn the implementation

@@ -17,7 +17,7 @@ if [ -e "$app_dir" ] && { [ ! -f "$app_dir/.halite-install" ] || [ "$(cat "$app_
   echo "Refusing to replace an unrelated directory: $app_dir" >&2
   exit 1
 fi
-for existing in "$bin_dir/halite-desktop" "$desktop_dir/halite.desktop"; do
+for existing in "$bin_dir/halite" "$bin_dir/halite-desktop" "$desktop_dir/halite.desktop"; do
   if [ -e "$existing" ] && ! grep -Fq "$marker" "$existing"; then
     echo "Refusing to replace an unrelated file: $existing" >&2
     exit 1
@@ -37,6 +37,9 @@ fi
 shell_path=$(printf '%s' "$app_dir/halite" | sed "s/'/'\\\\''/g")
 printf '#!/bin/sh\n# %s\nexec '\''%s'\'' "$@"\n' "$marker" "$shell_path" > "$bin_dir/halite-desktop"
 chmod 755 "$bin_dir/halite-desktop"
+cli_path=$(printf '%s' "$app_dir/resources/app/dist/server/server/cli.js" | sed "s/'/'\\\\''/g")
+printf '#!/bin/sh\n# %s\nELECTRON_RUN_AS_NODE=1 exec '\''%s'\'' '\''%s'\'' "$@"\n' "$marker" "$shell_path" "$cli_path" > "$bin_dir/halite"
+chmod 755 "$bin_dir/halite"
 exec_path=$(printf '%s' "$bin_dir/halite-desktop" | sed 's/\\/\\\\\\\\/g; s/"/\\\\"/g; s/`/\\\\`/g; s/\$/\\\\$/g; s/%/%%/g')
 icon_path=$(printf '%s' "$app_dir/resources/app/desktop/icon.png" | sed 's/\\/\\\\/g')
 cat > "$desktop_dir/halite.desktop" <<EOF

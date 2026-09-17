@@ -25,6 +25,7 @@ export async function packageDeb({ bundle, release, version, arch }) {
   ].join('\n');
   await writeFile(path.join(stage, 'DEBIAN/control'), control);
   await writeFile(path.join(stage, 'usr/bin/halite-desktop'), '#!/bin/sh\nexec /opt/halite/halite "$@"\n', { mode: 0o755 });
+  await writeFile(path.join(stage, 'usr/bin/halite'), '#!/bin/sh\nELECTRON_RUN_AS_NODE=1 exec /opt/halite/halite /opt/halite/resources/app/dist/server/server/cli.js "$@"\n', { mode: 0o755 });
   await writeFile(path.join(stage, 'usr/share/applications/halite.desktop'), '[Desktop Entry]\nType=Application\nName=Halite\nGenericName=Markdown Reader\nComment=Read local project documentation, equations, and diagrams\nExec=/usr/bin/halite-desktop\nIcon=/opt/halite/resources/app/desktop/icon.png\nTerminal=false\nCategories=Development;Utility;\nKeywords=Markdown;Documentation;Reader;\nStartupWMClass=Halite\n');
   const name = `halite-${version}-linux-${arch}-preview.deb`;
   execFileSync('dpkg-deb', ['--root-owner-group', '-Zgzip', '--build', stage, path.join(release, name)], { stdio: 'inherit' });

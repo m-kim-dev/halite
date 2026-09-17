@@ -1,5 +1,37 @@
 # Halite validation record
 
+## 0.2.0 project tabs and shared service — September 17, 2026
+
+The shared-service implementation passed 36 unit/integration tests and the six
+existing browser reader tests. Additional CLI checks started four commands
+concurrently and verified one daemon PID, one HTTP origin, one canonical project,
+window overrides, explicit port conflicts, stale-lock recovery after SIGKILL,
+and service shutdown.
+
+The browser workspace check opened eight project readers on the same port.
+It verified tab switching, retained scrolling, updates to a background project,
+CLI-triggered document activation without another browser window, moving a tab
+to a window, recent-project search, saved opening preference, and a narrow layout.
+
+Source and installed-archive desktop checks covered native find, isolated
+clipboard permissions, diagrams, math, source previews, live refresh, tabs,
+moving between windows, recent projects, preferences, and graceful restart.
+The packaged CLI ran through the bundled Electron runtime, joined the desktop's
+existing daemon, and opened another native window without another backend PID or
+port. The host archive check used the documented test-only sandbox override.
+
+The `.deb` workflow was also run in Debian 12 and Ubuntu 24.04 x64 containers
+with Chromium sandboxing enabled, followed by a synthetic package revision
+upgrade and removal. Project files and external state remained intact. These
+container checks use a virtual display; native picker selections are mocked.
+They do not establish real Wayland/macOS/Windows/ARM desktop compatibility.
+
+The tests caught and fixed frame clipboard checks, scroll resets when hiding
+readers, native find routing, asynchronous window cleanup, and inherited
+Chromium descriptors keeping the detached service tied to a former desktop.
+The release includes `.deb` and portable archives with verified SHA-256 files.
+Older validation records below describe their own historical builds.
+
 ## Unreleased 0.2.0 candidate — September 15, 2026
 
 The standard 29 tests and production build passed. The new desktop find suite

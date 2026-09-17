@@ -8,27 +8,47 @@ This walkthrough explains the first implementation. The [design notes](design.md
 explain why these behaviors were chosen, and the [README](../README.md) contains
 the commands needed to run it.
 
-## Desktop entry point
+## Desktop and CLI entry points
 
-[desktop/main.cjs](../desktop/main.cjs) wraps the same production reader in
-Electron. The built-in `halite://app/index.html` welcome screen can request a
-native file/folder picker, open the example, and reopen validated recent paths.
-Each project gets a loopback server on a free port. Switching projects or
-returning to Welcome closes the previous server; quitting closes the final one.
+[server/cli.ts](../server/cli.ts) uses [client.ts](../server/client.ts) to find or
+start a single background [daemon](../server/daemon.ts). Commands travel over a
+private Unix socket. The daemon owns one loopback HTTP listener and the
+[workspace registry](../server/workspaces.ts). Each canonical root has one
+[project session](../server/session.ts): index, watcher, and preference store.
+Opening the same root through a file or symlink activates its existing tab.
 
-The renderer has sandboxing and context isolation enabled, without Node access.
-The small preload bridge is available only on the built-in welcome page; IPC
-handlers also verify the sender and main frame. Project documents receive no
-bridge. Native navigation is constrained to the current reader; external HTTP,
-HTTPS, and mail links open through the operating system. Clipboard writes are
-allowed for the reader's copy controls; clipboard reads and device permissions
-are denied. This follows the [Electron security guidance](https://www.electronjs.org/docs/latest/tutorial/security).
+[desktop/main.cjs](../desktop/main.cjs) connects to this service using Electron's
+bundled Node runtime. Each native window displays one workspace. The browser
+uses the same [Workspace](../src/Workspace.tsx) component. Its project readers
+are separate frames, retained while inactive. One workspace event stream carries
+all project changes; the workspace forwards updates to the relevant reader.
+Moving a tab preserves its project session and restores the reader's saved place.
 
-Recent paths live in the desktop user-data directory. Existing per-project
-reading preferences still use `PreferenceStore`, shared with the CLI. The desktop
-package embeds the client, a bundled production server, and Electron; Node/npm
-are build tools rather than requirements for someone installing the app.
-See [release instructions](releasing.md) for the Linux sandbox validation limit.
+The desktop preload bridge is restricted to its exact workspace URL and top
+frame. Document frames receive no bridge or Node access. Native navigation is
+restricted to the workspace and local project routes. Find controllers route
+panel IPC by sender, so multiple windows do not overwrite one another's handlers.
+Clipboard writes are allowed for local readers; clipboard reads and device
+permissions are denied. Scripts in documents are never executed.
+
+New filesystem paths enter through the CLI or native picker over the private
+control socket. Browser HTTP commands can manipulate workspaces and reopen known
+recents, but cannot supply new roots. Host/origin checks and canonical-root file
+checks apply to every project. The local HTTP origin is shared; project IDs are
+routing identifiers, not a substitute for the filesystem checks.
+
+Service discovery uses a private runtime directory and a versioned handshake.
+A startup lock prevents duplicate daemons; a dead owner's lock is recovered.
+When Electron starts the detached service, inherited descriptors are explicitly
+replaced so Chromium sockets cannot keep the former desktop process alive.
+The service persists until `halite stop`. Closed projects and disconnected
+browser workspaces have a grace period before cleanup. Settings and recents live
+in `workspace-settings.json` beside per-project preferences. Previous desktop
+recents are imported when there are no new workspace settings.
+
+See [the multiple-project design](multiple-projects.md) for lifecycle choices and
+limitations. The production package bundles the daemon and CLI as well as the UI;
+readers need no separate Node installation.
 
 ## Follow one document from disk to screen
 
@@ -46,7 +66,8 @@ flowchart LR
 ```
 
 Start with [server/cli.ts](../server/cli.ts). It parses the path and options,
-starts the service, optionally opens the browser, and handles Ctrl-C. The
+connects to the service, sends an open request, and exits. Development mode still
+runs an isolated reader in the foreground and handles Ctrl-C. The
 compiled entry point includes a shebang, so npm can expose it as `halite`.
 
 [server/project.ts](../server/project.ts) resolves the path to its canonical
@@ -71,12 +92,16 @@ development it delegates UI requests to Vite. After a build, it serves
 
 | Endpoint | Responsibility |
 | --- | --- |
-| `GET /api/bootstrap` | Project identity, initial selection, index, and preferences |
-| `GET /api/files` | Updated Markdown metadata |
-| `GET /api/document?path=…` | Markdown, supported text, or a folder listing |
-| `GET /api/asset?path=…` | Supported image assets |
-| `GET /api/events` | A persistent stream of file-change notifications |
-| `POST /api/preferences` | Viewer state stored outside the project |
+| `GET /api/projects/:id/bootstrap` | Project identity, initial selection, index, and preferences |
+| `GET /api/projects/:id/files` | Updated Markdown metadata |
+| `GET /api/projects/:id/document?path=…` | Markdown, supported text, or a folder listing |
+| `GET /api/projects/:id/asset?path=…` | Supported image assets |
+| `GET /api/projects/:id/events` | A persistent stream of file-change notifications |
+| `POST /api/projects/:id/preferences` | Viewer state stored outside the project |
+
+The workspace uses `GET /api/workspaces/:id`, a matching `/events` stream, and
+validated POST actions. The old unprefixed project endpoints remain available
+only for isolated development readers and regression fixtures.
 
 The document endpoint opens a directory's README when present; otherwise it
 lists immediate Markdown files and subdirectories. Missing or unsupported files

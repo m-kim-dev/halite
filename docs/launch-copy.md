@@ -1,7 +1,7 @@
 # Halite launch copy
 
 The [Linux preview release](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1)
-is being prepared; the [tester invitation](https://github.com/m-kim-dev/halite/discussions/1)
+includes project tabs and a shared local service; the [tester invitation](https://github.com/m-kim-dev/halite/discussions/1)
 was published on 2026-09-14. No payment link is active. Reusable copy follows;
 the live pages contain the full installation details and validation limits.
 
@@ -25,7 +25,9 @@ folder, follow relative links, and read Markdown, equations, and Mermaid diagram
 without importing your files.
 
 This preview includes a native file/folder picker, recent projects, light and
-dark themes, live refresh, in-document find, and a small example to explore. Documents stay
+dark themes, live refresh, in-document find, project tabs, optional separate windows, and a small example to explore.
+CLI commands reuse one background process and port, and exit after opening a project.
+Use `halite stop` before upgrading or removing this version. Documents stay
 read-only and local. No Node installation or account is needed for the desktop
 package. Remote images and external links can still use the network.
 

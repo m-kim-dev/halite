@@ -21,6 +21,7 @@ runuser -u tester -- env HALITE_TEST_BINARY=/opt/halite/halite xvfb-run -a node 
 dpkg --remove halite-desktop
 test ! -e /opt/halite/halite
 test ! -e /usr/bin/halite-desktop
+test ! -e /usr/bin/halite
 test ! -e /usr/share/applications/halite.desktop
 test "$(cat /home/tester/.local/state/halite/qa-marker)" = 'preserve outside application'
 echo 'PASS: install, sandboxed workflows, synthetic revision upgrade, removal, and external state preservation.'

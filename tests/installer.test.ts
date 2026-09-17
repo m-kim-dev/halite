@@ -24,6 +24,7 @@ describe('Linux user installer', () => {
     const { source, target, install } = await fixture();
     expect(install()).toContain('Installed Halite');
     expect(execFileSync(path.join(target, 'bin/halite-desktop'), ['argument with spaces', '$literal'], { encoding: 'utf8' })).toBe('argument with spaces\n$literal\n');
+    expect(execFileSync(path.join(target, 'bin/halite'), ['project with spaces', '$literal'], { encoding: 'utf8' })).toBe(`${path.join(target, 'opt/halite/resources/app/dist/server/server/cli.js')}\nproject with spaces\n$literal\n`);
     expect(await readFile(path.join(target, 'share/applications/halite.desktop'), 'utf8')).toContain('Name=Halite');
     await writeFile(path.join(source, 'new-version.txt'), 'new build');
     install();
