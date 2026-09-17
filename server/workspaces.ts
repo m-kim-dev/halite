@@ -4,7 +4,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { createProjectSession, type ProjectSession } from './session.js';
-import { discoverProject, FileError } from './project.js';
+import { discoverProject, FileError, markdownPattern } from './project.js';
 
 export const protocolVersion = 1;
 export type OpenMode = 'tab' | 'window';
@@ -104,6 +104,19 @@ export class WorkspaceRegistry {
     if (this.closing) throw new FileError('Halite is stopping.', 503);
     const { action } = command;
     if (action === 'status') return this.status();
+    if (action === 'navigate') {
+      if (typeof command.input !== 'string') throw new FileError('Choose a Markdown file.');
+      const discovered = await discoverProject(command.input, command.root);
+      const s = [...this.sessions.values()].find(s => s.project.root === discovered.root);
+      const w = s && [...this.workspaces.values()].filter(w => w.tabs.includes(s.id) && w.clients.size > 0).sort((a, b) => b.touched - a.touched)[0];
+      if (!s || !w) throw new FileError('Open this project in Halite before following it.', 409);
+      if (!discovered.requestedFile || !markdownPattern.test(discovered.requestedFile)) throw new FileError('Choose a Markdown file.');
+      w.active = s.id;
+      w.initialPaths[s.id] = discovered.requestedFile;
+      this.broadcast();
+      this.send(w, { type: 'activate', project: s.id, path: discovered.requestedFile });
+      return { project: s.id, workspace: w.id, root: s.project.root, url: `${this.origin}/workspaces/${w.id}/`, shouldOpen: false, kind: w.kind };
+    }
     if (action === 'new-window') {
       const w = this.createWorkspace(command.kind || (command.workspace ? this.workspace(command.workspace).kind : 'browser'));
       this.broadcast(); return { workspace: w.id, url: `${this.origin}/workspaces/${w.id}/`, shouldOpen: true, kind: w.kind };

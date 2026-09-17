@@ -16,6 +16,8 @@ await writeFile(path.join(input, 'README.md'), '# CLI project\n');
 let socketDirectory;
 try {
   socketDirectory = (await runtimePaths()).directory;
+  await assert.rejects(() => run(process.execPath, [cli, path.join(input, 'README.md'), '--background'], { env: process.env }), /not running/);
+  await assert.rejects(() => serviceCommand({ action: 'status' }));
   const results = await Promise.all(Array.from({ length: 4 }, () => run(process.execPath, [cli, input, '--no-open'], { env: process.env, timeout: 20000 })));
   const status = await serviceCommand({ action: 'status' });
   assert.equal(status.projects.length, 1);

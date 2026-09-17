@@ -38,7 +38,7 @@ const control = action => new Promise((resolve, reject) => {
   const req = request({ socketPath: path.join(directory, 'control.sock'), path: '/command', method: 'POST' }, response => {
     let data = ''; response.on('data', chunk => { data += chunk; }); response.on('end', () => { try { resolve(JSON.parse(data)); } catch (error) { reject(error); } });
   });
-  req.on('error', reject); req.setTimeout(5000, () => req.destroy(new Error('Test control timeout'))); req.end(JSON.stringify({ protocol: 1, action }));
+  req.on('error', reject); req.setTimeout(5000, () => req.destroy(new Error('Test control timeout'))); req.end(JSON.stringify({ protocol: 1, ...(typeof action === 'string' ? { action } : action) }));
 });
 let application;
 const errors = [];
@@ -90,6 +90,17 @@ try {
   await document.getByRole('link', { name: 'crystal notes', exact: true }).click();
   await expect(document.locator('.katex-display')).toHaveCount(2);
   await checkFind(application, document, output, errors);
+  // Following from an editor navigates an existing reader without showing or focusing it.
+  await application.evaluate(({ BrowserWindow }) => {
+    globalThis.haliteFollowFocuses = 0;
+    const window = BrowserWindow.getAllWindows()[0];
+    window.hide(); window.on('focus', () => { globalThis.haliteFollowFocuses++; });
+  });
+  const exampleRoot = (await control('status')).projects.find(project => project.root.endsWith('/desktop/example')).root;
+  expect(await control({ action: 'navigate', input: path.join(exampleRoot, 'README.md'), root: exampleRoot })).toMatchObject({ shouldOpen: false });
+  await expect(document.getByRole('heading', { name: 'A clearer view of your project', exact: true })).toHaveCount(1);
+  expect(await application.evaluate(({ BrowserWindow }) => ({ visible: BrowserWindow.getAllWindows()[0].isVisible(), focuses: globalThis.haliteFollowFocuses, count: BrowserWindow.getAllWindows().length }))).toEqual({ visible: false, focuses: 0, count: 1 });
+  await application.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].show());
   await welcome();
   await expect(page.getByRole('heading', { name: 'A quiet place to read your project.' })).toBeVisible();
   await expect(page.getByRole('tab', { name: 'example', exact: true })).toHaveCount(1);

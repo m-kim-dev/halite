@@ -5,6 +5,7 @@ Start with the [project README](../README.md) to run Halite, or visit the
 
 ## Using Halite
 
+- [0.4.0 release notes](releases/0.4.0.md): Neovim plugin and background navigation.
 - [0.3.0 release notes](releases/0.3.0.md): Markdown source view and copying.
 - [Linux preview guide](guides/linux-preview.md): installation, usage, limitations,
   and feedback.
@@ -17,6 +18,7 @@ Start with the [project README](../README.md) to run Halite, or visit the
 - [Implementation walkthrough](engineering/architecture.md)
 - [Multiple-project architecture](engineering/multiple-projects.md)
 - [Markdown source and copying](engineering/markdown-source.md)
+- [Neovim integration](engineering/neovim.md)
 - [Validation record](engineering/validation.md)
 - [Preparing a release](engineering/releasing.md)
 

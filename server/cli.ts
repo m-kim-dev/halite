@@ -9,6 +9,7 @@ try {
   const { values, positionals } = parseArgs({ allowPositionals: true, options: {
     root: { type: 'string' }, port: { type: 'string' }, 'no-open': { type: 'boolean' },
     window: { type: 'boolean' }, tab: { type: 'boolean' },
+    background: { type: 'boolean' },
     dev: { type: 'boolean' }, help: { type: 'boolean', short: 'h' },
   } });
   if (values.help) {
@@ -22,6 +23,7 @@ Usage: halite [file-or-directory] [options]
   --root <directory> Set the accessible project root
   --port <number>    Choose the shared service port (default: available port)
   --no-open          Print the workspace URL without launching a browser
+  --background       Navigate a file in an already-connected project; never launch
   --dev              Run an isolated foreground development reader
   --help             Show this help
 
@@ -31,6 +33,7 @@ Preferences and service identity use HALITE_STATE_DIR or the user state director
   } else {
     if (positionals.length > 1) throw new Error('Supply one file or directory.');
     if (values.tab && values.window) throw new Error('Choose --tab or --window.');
+    if (values.background && (values.tab || values.window || values.dev || values.port !== undefined || positionals.length !== 1 || ['status', 'stop'].includes(positionals[0]))) throw new Error('--background requires one file and cannot be combined with --tab, --window, --dev, or --port.');
     const port = values.port === undefined ? undefined : Number(values.port);
     if (port !== undefined && (!Number.isInteger(port) || port < 0 || port > 65535)) throw new Error('--port must be an integer from 0 to 65535.');
     const action = positionals[0];
@@ -42,7 +45,15 @@ Preferences and service identity use HALITE_STATE_DIR or the user state director
     } else {
       const input = path.resolve(action || process.cwd());
       let url: string; let shouldOpen = true; let kind = 'browser';
-      if (values.dev) {
+      if (values.background) {
+        try {
+          const result = await serviceCommand({ action: 'navigate', input, root: values.root ? path.resolve(values.root) : undefined });
+          ({ url, kind } = result); shouldOpen = false;
+        } catch (error) {
+          if (unavailable(error)) throw new Error('Halite is not running. Open the project before following it.');
+          throw error;
+        }
+      } else if (values.dev) {
         const app = await startServer({ input, root: values.root, port: port ?? 4173, dev: true });
         url = app.url;
         let stopping = false;

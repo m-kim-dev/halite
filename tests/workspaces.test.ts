@@ -22,6 +22,26 @@ beforeEach(async () => {
 afterEach(async () => { await service.close(); await rm(temporary, { recursive: true, force: true }); });
 
 describe('shared projects and workspaces', () => {
+  it('background navigation only uses connected projects without registering or launching anything', async () => {
+    const a: any = await service.registry.command({ action: 'open', input: alpha });
+    await expect(service.registry.command({ action: 'navigate', input: path.join(alpha, 'guide.md') })).rejects.toThrow('Open this project');
+    const controller = new AbortController();
+    const events = await fetch(`${service.url}/api/workspaces/${a.workspace}/events`, { signal: controller.signal });
+    try {
+      expect(events.status).toBe(200);
+      const before = service.registry.status();
+      const recents = [...service.registry.recents];
+      const result: any = await service.registry.command({ action: 'navigate', input: path.join(alpha, 'guide.md') });
+      expect(result).toMatchObject({ workspace: a.workspace, project: a.project, shouldOpen: false });
+      expect(service.registry.status()).toEqual(before);
+      expect(service.registry.recents).toEqual(recents);
+      await expect(service.registry.command({ action: 'navigate', input: path.join(beta, 'guide.md') })).rejects.toThrow('Open this project');
+      await expect(service.registry.command({ action: 'navigate', input: alpha })).rejects.toThrow('Choose a Markdown file');
+      expect(service.registry.sessions.size).toBe(1);
+      const response = await fetch(`${service.url}/api/workspaces/${a.workspace}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'navigate', input: path.join(beta, 'guide.md') }) });
+      expect(response.status).toBe(403);
+    } finally { controller.abort(); }
+  });
   it('deduplicates simultaneous opens, symlink aliases, and documents within a root', async () => {
     await symlink(alpha, path.join(temporary, 'alias'));
     const results: any[] = await Promise.all([alpha, path.join(alpha, 'guide.md'), path.join(temporary, 'alias')].map(input => service.registry.command({ action: 'open', input })));

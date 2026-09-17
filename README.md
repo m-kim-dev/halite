@@ -27,10 +27,10 @@ downloads support packaging and maintenance; building from source stays an optio
 The desktop preview adds project tabs, optional separate windows, a native
 folder/file picker, recent projects, and a built-in example. All projects share
 one local backend and one port, including projects opened from the CLI. Its packages include the runtime, so readers do not need Node.
-See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.3.0-preview.1/docs/guides/linux-preview.md) for installation,
+See the [published preview installation guide](https://github.com/m-kim-dev/halite/blob/v0.4.0-preview.1/docs/guides/linux-preview.md) for installation,
 preview limitations, and feedback prompts.
 
-[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1) ·
+[Download the Linux x64 preview](https://github.com/m-kim-dev/halite/releases/tag/v0.4.0-preview.1) ·
 [Join the preview testers](https://github.com/m-kim-dev/halite/discussions/1) ·
 [Report a problem or share feedback](https://github.com/m-kim-dev/halite/issues/new?template=preview-feedback.yml)
 
@@ -135,6 +135,19 @@ after a service restart. Reopen Halite to obtain fresh workspace URLs.
 
 The Linux packages include a `halite` CLI launcher using their bundled runtime,
 as well as `halite-desktop`. See the [architecture and design](docs/engineering/multiple-projects.md).
+
+## Neovim
+
+[halite.nvim](https://github.com/m-kim-dev/halite.nvim) is the free companion plugin.
+Use `:Halite` to preview the saved Markdown buffer and `:HaliteFollow on` to follow
+buffer changes in already-open projects. The preview runs outside Neovim and
+shares the existing Halite service. See the plugin's installation instructions.
+
+For editor integrations, `halite /path/to/file.md --background` navigates only a
+connected project. It never starts a service, registers a new project, launches
+a window, or requests window focus. `--root` is supported for explicit scope.
+Open the project normally first. This differs from `--no-open`, which still
+registers projects and starts the service while suppressing the browser launcher.
 
 ## Reading features
 

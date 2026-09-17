@@ -1,5 +1,24 @@
 # Halite validation record
 
+## 0.4.0 Neovim background navigation — September 17, 2026
+
+The build, 37 unit/integration tests, 12 browser tests, CLI checks, and
+eight-project workspace workflow passed. New checks verify that background
+navigation requires a connected project, cannot register a project through HTTP,
+and cannot start a missing service. The portable-archive and installed Debian 12
+and Ubuntu 24.04 x64 workflows passed, including a hidden-window check that
+asserts background navigation neither shows nor focuses the desktop window.
+Both container runs kept Chromium sandboxing enabled and passed synthetic
+revision upgrade/removal with external state preserved. Host archive testing
+used the existing test-only sandbox override.
+
+The companion plugin passed 13 headless cases on Neovim 0.10.4 and 0.12.5,
+plus real two-editor/Chromium integration checks on both versions. These cover
+one shared PID/port, file/project following, saved versus unsaved content,
+explicit window requests, disconnected-project pause, and service survival after
+editor exit. See the plugin repository for details. Native default-browser focus,
+macOS, Windows, Wayland, and older-release package migration remain unvalidated.
+
 ## 0.3.0 Markdown source and copying — September 17, 2026
 
 All 36 unit/integration tests, the production build, and 12 browser tests passed.

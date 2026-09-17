@@ -1,11 +1,11 @@
 # Halite for Linux — desktop preview
 
-This guide describes the [0.3.0 Linux preview](https://github.com/m-kim-dev/halite/releases/tag/v0.3.0-preview.1).
+This guide describes the [0.4.0 Linux preview](https://github.com/m-kim-dev/halite/releases/tag/v0.4.0-preview.1).
 
 **A quiet place to read your project.** Open an existing folder and browse
 Markdown, equations, and diagrams while you keep writing in your editor.
 
-This is version 0.3.0, an early preview. It is free to try. Purchasing is not
+This is version 0.4.0, an early preview. It is free to try. Purchasing is not
 available yet; the proposed desktop price is **$19 once**. There is no account,
 subscription, activation service, telemetry, or automatic updater.
 
@@ -17,7 +17,7 @@ directory with `sha256sum -c FILE.sha256`.
 For Debian/Ubuntu, open the `.deb` in your software installer, or run:
 
 ```sh
-sudo apt install ./halite-0.3.0-linux-x64-preview.deb
+sudo apt install ./halite-0.4.0-linux-x64-preview.deb
 ```
 
 This installs Halite under `/opt/halite`, adds an application-menu entry and
@@ -78,6 +78,18 @@ Halite reads your existing files and does not change them. It discovers the
 enclosing Git root when one exists. Relative links stay inside that project.
 No documents are uploaded. Remote images and external links in documents can
 still contact their destinations.
+
+## Neovim integration
+
+The free [halite.nvim plugin](https://github.com/m-kim-dev/halite.nvim) opens saved
+Markdown from Neovim in this reader. `:Halite` opens a project tab; saving in
+Neovim refreshes the preview. `:HaliteFollow on` follows saved buffers in projects
+that are already open. Preview stays outside Neovim. No paid purchase is needed.
+
+The plugin uses the packaged `halite` CLI and the same service and port as the
+desktop. Its background command never starts the service or opens windows.
+If upgrading from an earlier preview, run `halite stop`, close the desktop, and
+reopen it before using Follow. Neovim 0.10+ is required.
 
 ## View and copy Markdown
 
