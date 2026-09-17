@@ -5,7 +5,8 @@ invitation posted in GitHub Discussions. No testers are confirmed at launch;
 checkout, customers, and revenue are not active yet. Pricing below is a proposal.
 Owner: [M. Kim / m-kim-dev](https://github.com/m-kim-dev).
 Repository: [m-kim-dev/halite](https://github.com/m-kim-dev/halite).
-Preview: [v0.1.0-preview.1](https://github.com/m-kim-dev/halite/releases/tag/v0.1.0-preview.1).
+Website: [Halite](https://halite-reader.pages.dev/).
+Preview: [v0.2.0-preview.1](https://github.com/m-kim-dev/halite/releases/tag/v0.2.0-preview.1).
 Recruitment: [Linux preview testers](https://github.com/m-kim-dev/halite/discussions/1).
 
 ## The offer
@@ -104,10 +105,13 @@ sponsorships can carry fees. Eligibility/setup still needs to be completed.
 - Clear update entitlement, support expectations, refund policy, and tested
   refunds before taking real payments.
 
-The owner has no Lemon Squeezy account yet. The
+The Lemon Squeezy application is under review, with additional product
+information requested. The public [marketing page](https://halite-reader.pages.dev/)
+contains the demo, planned pricing, and developer verification links. The
 [checkout setup packet](checkout-setup.md) contains the product fields, copy,
 assets, and acceptance checks. Account creation, identity/business information,
-and payout onboarding must be completed by the owner in Lemon Squeezy.
+and payout onboarding remain in the owner's Lemon Squeezy account; live selling
+and fulfillment must be verified before opening checkout.
 
 Do not promise automatic updates, macOS/Windows, cloud sync, or lifetime support.
 Manual download-and-install updates are sufficient initially if stated clearly.

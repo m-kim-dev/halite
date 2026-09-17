@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": { "name": "M. Kim", "url": "https://github.com/m-kim-dev" },
   "repository": { "type": "git", "url": "https://github.com/m-kim-dev/halite.git" },
-  "homepage": "https://github.com/m-kim-dev/halite#readme",
+  "homepage": "https://halite-reader.pages.dev/",
   "bugs": { "url": "https://github.com/m-kim-dev/halite/issues" },
   "type": "module",
   "description": "Halite — a local, read-only Markdown reader for project documentation.",
@@ -16,6 +16,7 @@
   "scripts": {
     "dev": "tsx server/cli.ts --dev",
     "build": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json && vite build",
+    "build:marketing": "node scripts/build-marketing.mjs",
     "start": "node dist/server/server/cli.js",
     "test": "vitest run",
     "test:e2e": "playwright test",

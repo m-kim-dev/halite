@@ -2,6 +2,8 @@
 
 **A quiet place to read your project.**
 
+[Product website, demo, and pricing](https://halite-reader.pages.dev/)
+
 Halite is a local, read-only Markdown reader for developers and researchers.
 Open an existing project, follow its links, and read its equations and diagrams.
 Keep writing in Neovim or your favourite editor; Halite refreshes as you save.
@@ -9,6 +11,8 @@ Your documents stay in their original directories.
 
 Named after halite, the crystalline form of sodium chloride (NaCl).
 By [M. Kim](https://github.com/m-kim-dev).
+
+The marketing page is hosted on Cloudflare Pages. See its [build and deployment guide](docs/marketing.md).
 
 Source is available under the [MIT license](LICENSE). The planned paid desktop
 downloads support packaging and maintenance; building from source stays an option.

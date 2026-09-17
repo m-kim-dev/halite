@@ -1,8 +1,9 @@
 # Halite checkout setup packet
 
-Prepared 2026-09-14. This is an unpublished setup draft for the proposed paid
-1.x release. The 0.1.0 preview stays free. No merchant account, checkout, test
-order, customer, or revenue exists yet.
+Prepared 2026-09-14; updated 2026-09-17. This is an unpublished checkout setup
+draft for the proposed paid 1.x release. The 0.2.0 preview stays free. The merchant
+application has been submitted and additional product information requested.
+Live checkout and fulfillment have not been verified; paid sales have not started.
 
 ## Owner setup
 
@@ -20,7 +21,10 @@ and country details; a GitHub profile is not a substitute for those answers.
 [Store activation](https://docs.lemonsqueezy.com/help/getting-started/activate-your-store).
 
 Use **Halite — Markdown reader** as the public store identity if available.
-The product website is <https://github.com/m-kim-dev/halite>.
+The product website is <https://halite-reader.pages.dev/>.
+The page includes a playable demo, current downloads, detailed planned pricing,
+developer profiles, and contact information. Its source and deployment process
+are documented in [the marketing guide](marketing.md).
 Public technical support is <https://github.com/m-kim-dev/halite/issues>.
 Add an owner-controlled private support email before taking payments; billing
 details and refund requests do not belong in public GitHub issues.
