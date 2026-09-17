@@ -23,8 +23,9 @@ The page does not collect signups or payments. Planned digital delivery through
 Lemon Squeezy is described in the FAQ. Do not turn on purchasing or promise
 refund terms until the paid product and merchant fulfillment are ready.
 
-Developer verification links point to the existing GitHub and linked Mastodon
-profiles. The support email is the existing Halite business contact. No new
+Developer verification links point to the owner-provided LinkedIn profile,
+existing GitHub profile, and linked Mastodon profile. The support email is the
+existing Halite business contact. No new
 social profiles were created for the page.
 
 ## Source and build
