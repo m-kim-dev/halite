@@ -476,6 +476,55 @@ kbd {
   border:1px solid #42506a;
   border-radius:6px;
 }
+.video-stage {
+  position:relative;
+}
+.video-start {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:.75rem;
+  background:#0b183348;
+  border:0;
+  border-radius:6px;
+  color:white;
+  font:600 .875rem/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  cursor:pointer;
+  padding:1rem;
+}
+.video-start[hidden] {
+  display:none;
+}
+.video-start>span:first-child {
+  display:grid;
+  place-items:center;
+  width:3.5rem;
+  height:3.5rem;
+  border-radius:50%;
+  background:white;
+  color:var(--blue);
+  padding-left:.2rem;
+  font-size:1rem;
+  box-shadow:0 4px 24px #0b183345;
+}
+.video-start>span:last-child {
+  background:#13213b;
+  padding:.5rem .8rem;
+  border-radius:4px;
+}
+.video-start:hover>span:first-child {
+  background:#dbe7ff;
+}
+.video-start:focus-visible {
+  outline:3px solid #9cb8f9;
+  outline-offset:6px;
+}
+.video-start:disabled {
+  cursor:wait;
+}
 
 .video-container>p {
   font-size:.75rem;

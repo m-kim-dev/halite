@@ -31,7 +31,7 @@ social profiles were created for the page.
 
 - `marketing/public/index.html`: all product content and semantic page structure.
 - `marketing/public/styles.css`: brand tokens, layouts, and responsive styles.
-- `marketing/public/site.js`: optional video metadata loading on demo navigation.
+- `marketing/public/site.js`: loads the small demo as a seekable blob on play.
 - `marketing/public/_headers`: Cloudflare security and resource policy headers.
 - `marketing/public/404.html`: a real not-found page; unknown paths are not an SPA.
 - `marketing/config.json`: canonical public URL and deployment identifiers.
@@ -48,7 +48,8 @@ Open <http://127.0.0.1:8788>. The build uses Node's standard library; it does no
 bundle or run the Halite application and needs no additional npm dependencies.
 There are no Pages Functions, backend processes, database, third-party fonts,
 analytics scripts, or embedded external video players. Page navigation,
-downloads, native video controls, and FAQ disclosures work without JavaScript.
+downloads and FAQ disclosures work without JavaScript; the original native video
+player and direct MP4 link remain available as fallbacks.
 Cloudflare still handles ordinary hosting requests and platform logging.
 
 The build copies the two screenshots and MP4 from `docs/images`, and the icon
@@ -56,6 +57,14 @@ from `desktop/icon.svg`. Those remain the authoritative assets. Screenshots use
 public examples. The 20-second silent demo shows core reading features and
 predates project tabs; the separate 0.2.0 screenshot demonstrates those tabs.
 A text description next to the video provides its visual sequence.
+
+Cloudflare Pages currently returns full HTTP 200 responses to video Range
+requests, which prevents reliable native seeking. On the play button's first
+activation, the script fetches the complete 679 KB clip and supplies a local blob
+URL to the native player. This enables seeking without a Pages Function or a
+separate video service. Nothing autoplays before that action. Fetch or playback
+failure exposes the native controls and a message pointing to the download.
+See [Serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/).
 
 Only `dist/marketing` is uploaded. Repository files, private business notes,
 desktop binaries, and local credentials are excluded from the site bundle.
