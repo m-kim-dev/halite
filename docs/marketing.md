@@ -119,3 +119,10 @@ text enlargement. Navigation anchors, current release target, planned-sale
 status, native FAQ disclosures without JavaScript, loaded screenshots, and
 20-second MP4 playback passed. Desktop and mobile screenshots were inspected.
 No browser console or page errors were reported.
+
+The production URL was also checked without authentication. Published HTML,
+styles, scripts, screenshots, demo, and search metadata matched the local build.
+The media response uses `video/mp4`; the security headers and custom HTTP 404
+page were verified. The hosted demo plays and seeks to 18 seconds after the
+blob-loading fix. A simulated failed video download exposed the fallback message
+and native controls. The play control also fits at 200% text on narrow screens.
